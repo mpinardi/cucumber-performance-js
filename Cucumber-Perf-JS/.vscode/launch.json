@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to Process",
+            "type": "node",
+            "request": "attach",
+            "processId": "${command:PickProcess}"
+        },
+        {
+            "name": "Attach to Process2",
+            "type": "node",
+            "request": "attach",
+            "processId": "${command:PickProcess}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Node1",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "args": [
+                "--plantags","@simperiodtest","--perf-format","progress","--perf-format","summary","--plans","${workspaceRoot}\\test\\plans\\", "${workspaceRoot}\\test\\features\\"
+            ],
+            "autoAttachChildProcesses": true,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "cucumber",
+            "program": "${workspaceRoot}\\node_modules\\cucumber\\bin\\cucumber-js",
+            "args": [
+                 "${workspaceRoot}\\test\\features\\"
+            ],
+            "autoAttachChildProcesses": true,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "CLI",
+            "program": "${workspaceRoot}\\dist\\cucumber-perf-cli.js",
+            "args": [
+                "plans='${workspaceRoot}\\resources\\'"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "buildcli",
+            "console": "internalConsole",
+            "outFiles": [
+                "${workspaceRoot}/lib/cli/**.js"
+            ]
+     
+        }
+
+    ]
+}

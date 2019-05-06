@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build-local",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build-local-test",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build-browser-example",
+            "problemMatcher": []
+        }
+    ]
+}

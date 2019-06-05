@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import moment from 'moment'
-import {Status}from 'cucumber'
 import {isStatusFailure,isStatusWarning } from './helpers'
 
 export default class Statistics {
@@ -26,15 +25,18 @@ export default class Statistics {
       sum: 0,
       uri: null,
       testCases: [
-              {
+        {
                 steps: [
                   {
-                    avg: 0,
-                    min: 0,
-                    max: 0,
-                    cnt: 0,
-                    sum: 0,
-                    text: this.testCases[this.curTestCase].pickle.steps[this.curStep].text
+                   avg: 0,
+                  min: null,
+                  max: null,
+                  cnt: 0,
+                  sum: 0,
+                  sourceLocation: ts.sourceLocation,
+                  actionLocation: ts.actionLocation,
+                  text: ts.text,
+                  status: ts.status
                   }
                 ],
                 line: 0,
@@ -44,7 +46,7 @@ export default class Statistics {
                 max: 0,
                 cnt: 0,
                 sum: 0
-              }
+        }
       chartPoints: []
     } */
     options.eventBroadcaster.on('simulation-run-finished', ::this.generateStatistics)
@@ -67,18 +69,20 @@ export default class Statistics {
                   {
                     start: new Date(),
                     stop: null,
+                    sourceLcation {line: 0,uri: null}
                     duration: 0,
                     status: null,
                     text: this.testCases[this.curTestCase].pickle.steps[this.curStep].text
+                    exception:[{}],
                   }
                 ],
                 start: new Date(),
                 stop: null,
                 duration: 0,
-                line: 0,
+                sourceLcation {line: 0,uri: null}
                 name: this.testCases[this.curTestCase].pickle.name,
-                uri: null,
                 status: null,
+                exception:{message:'message',status:''},
               }
             ],
             start: null,
@@ -93,7 +97,7 @@ export default class Statistics {
     } */
     this.options.eventBroadcaster.emit('simulation-statistics-started')
     this.startPeriod = data.start
-		this.period = this.getPeriod(this.durationBetween(data.start,data.stop),this.maxPoints);
+    this.period = this.getPeriod(this.durationBetween(data.start,data.stop),this.maxPoints);
     this.calculatedResult.start = data.start
     this.calculatedResult.stop = data.stop
     this.calculatedResult.duration = data.duration
@@ -198,7 +202,7 @@ export default class Statistics {
               text: this.testCases[this.curTestCase].pickle.steps[this.curStep].text
             } */
             let pts = {
-              start: ts.stop,
+              start: ts.start,
               stop: ts.stop,
               avg: ts.sum/ts.cnt,
               min: ts.min,
@@ -206,7 +210,8 @@ export default class Statistics {
               cnt: ts.cnt,
               sum: ts.sum,
               text: ts.text,
-              sourceLocation: ts.sourceLocation
+              sourceLocation: ts.sourceLocation,
+              actionLocation: ts.actionLocation
             }
             ptc.steps.push(pts)
           }
@@ -307,27 +312,10 @@ export default class Statistics {
           //result.uri = tc.uri
         }
         //add exceptions
-        if (tc.exception){
-          if (!ctc.exceptions){
-            tc.exception.cnt = 1
-            tc.exception.status = tc.status
-            ctc.exceptions = [tc.exception]
-            result.hasExceptions=true
-          } else
-          {
-            let ex = _.find(ctc.exceptions, { 'message': tc.exception.message })
-            if (ex)
-            {
-              ex.cnt++
-            } else
-            {
-              ex = tc.exception
-              ex.cnt = 1
-            }
-          }
-        } else if (isStatusWarning(tc.status)){
-          result.hasWarnings = true
-        }
+        if (tc.exception ||isStatusWarning(tc.status)){
+          result.hasIssues=true
+          ctc.hasIssues=true
+        } 
 
         if ((this.options.strict && gr.success) || !this.options.strict) {
           ctc.sum += tc.duration
@@ -375,7 +363,10 @@ export default class Statistics {
                 start: ts.start,
                 stop: ts.stop,
                 sourceLocation: ts.sourceLocation,
-                text: ts.text
+                actionLocation: ts.actionLocation,
+                text: ts.text,
+                status: ts.status
+
             }
             ptc.steps.push(pts)
           }
@@ -389,17 +380,51 @@ export default class Statistics {
                 cnt: 0,
                 sum: 0,
                 sourceLocation: ts.sourceLocation,
+                actionLocation: ts.actionLocation,
                 text: ts.text
             }
             ctc.steps.push(cts)
           }
-          //handle warnings
-          if (isStatusWarning(ts.status)|| ts.exception){
-            if (ts.exception)
-            {
-              cts.exception = ts.exception
+          //handle issues
+        /*   issues: [
+            { cnt: 0,
+              status: Status.FAILED,
+              exception: {}
             }
-            cts.status = ts.status
+          ] */
+          if (isStatusFailure(ts.status) ||isStatusWarning(ts.status))
+          {
+            if (!cts.issues){
+              let issue = ts.exception?{ cnt: 1, status: ts.status, exception: ts.exception}:{ cnt: 1, status: ts.status}
+              cts.issues = [issue]
+            }
+            else if (ts.exception) {
+                let ex = _.find(cts.issues, { 'exception.message': ts.exception.message })
+                if (ex)
+                {
+                  ex.cnt++
+                } else
+                {
+                  ex.exception = ts.exception
+                  ex.cnt = 1
+                  ex.status = ts.status
+                  cts.issues.push(ex)
+                }
+            }
+            else
+            {
+              let wrn = _.find(cts.issues, { 'status': ts.status })
+              if (wrn)
+              {
+                wrn.cnt++
+              } else
+              {
+                wrn.exception = ts.exception
+                wrn.cnt = 1
+                wrn.status = ts.status
+                cts.issues.push(wrn)
+              }
+            }
           }
 
           if ((this.options.strict && gr.success) || !this.options.strict) {

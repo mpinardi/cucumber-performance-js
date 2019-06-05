@@ -12,9 +12,9 @@ function generateEvents(data, uri, types, language) {
     'veggie': true
   }, types || {})
 
-  result = []
+  let result = []
   
-  //try {
+  try {
     if (types['source']) {
       result.push({
         type: 'source',
@@ -22,7 +22,7 @@ function generateEvents(data, uri, types, language) {
         data: data,
         media: {
           encoding: 'utf-8',
-          type: 'text/x.cucumber.salad+plain'
+          type: 'text/x.cucumber-perf.salad+plain'
         }
       })
     }
@@ -49,7 +49,7 @@ function generateEvents(data, uri, types, language) {
         })
       }
     }
-  /* } catch (err) {
+   } catch (err) {
     var errors = err.errors || [err]
     for (var e in errors) {
       result.push({
@@ -68,7 +68,7 @@ function generateEvents(data, uri, types, language) {
         }
       })
     }
-  } */
+  }
   return result
 }
 

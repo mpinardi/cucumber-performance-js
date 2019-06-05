@@ -4,7 +4,7 @@ function Compiler() {
   this.compile = function (salad_document) {
     var veggies = [];
 
-    if (salad_document.plan == null) return sims;
+    if (salad_document.plan == null) return veggies;
 
     var plan = salad_document.plan;
     var language = plan.language;
@@ -122,8 +122,8 @@ function Compiler() {
     return {
       text: group.text,
       argument: createVeggieArguments(group.argument, [], []),
-      runners:group.runners.text,
-      count: group.count.text,
+      runners:(group.runners!= undefined)?group.runners.text:'0',
+      count: (group.count!= undefined)?group.count.text:'0',
       locations: [veggieGroupLocation(group)]
     }
   }

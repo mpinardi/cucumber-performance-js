@@ -3,7 +3,7 @@ import commandTypes from '../command_types'
 import path from 'path'
 import Status from 'cucumber'
 import crossSpawn from 'cross-spawn'
- import moment from 'moment'
+import moment from 'moment'
 
 const cukeCommand = path.resolve(
   __dirname,

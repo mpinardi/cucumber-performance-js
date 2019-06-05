@@ -26,7 +26,7 @@ describe('ProfileLoader', () => {
           beforeEach(async function() {
             const fileContent = 'module.exports = {default: "--opt1 --opt2"}'
             await fs.writeFile(
-              path.join(this.tmpDir, 'cucumber.js'),
+              path.join(this.tmpDir, 'cucumber-perf.js'),
               fileContent
             )
           })
@@ -41,7 +41,7 @@ describe('ProfileLoader', () => {
           beforeEach(async function() {
             const fileContent = 'module.exports = {profile1: "--opt1 --opt2"}'
             await fs.writeFile(
-              path.join(this.tmpDir, 'cucumber.js'),
+              path.join(this.tmpDir, 'cucumber-perf.js'),
               fileContent
             )
           })
@@ -75,7 +75,7 @@ describe('ProfileLoader', () => {
             '  profile1: "--opt1 --opt2",\n' +
             '  profile2: "--opt3 \'some value\'"\n' +
             '}'
-          await fs.writeFile(path.join(this.tmpDir, 'cucumber.js'), fileContent)
+          await fs.writeFile(path.join(this.tmpDir, 'cucumber-perf.js'), fileContent)
         })
 
         describe('profile is defined', () => {

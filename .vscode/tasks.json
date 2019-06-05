@@ -12,16 +12,6 @@
             "type": "npm",
             "script": "build-local",
             "problemMatcher": []
-        },
-        {
-            "type": "npm",
-            "script": "build-local-test",
-            "problemMatcher": []
-        },
-        {
-            "type": "npm",
-            "script": "build-browser-example",
-            "problemMatcher": []
         }
     ]
 }

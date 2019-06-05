@@ -58,7 +58,7 @@ export default class Runner {
         }
         else {
           if (name === 'test-run-started') {
-            this.result.start = new Date()
+            this.result.start = moment.utc().format()
           }
           this.sendMessage({ command: commandTypes.EVENT, name})
         }
@@ -107,7 +107,7 @@ export default class Runner {
       this.result.testCases.push(
       {
         steps: [],
-        start: new Date(),
+        start: moment.utc().format(),
         stop: null,
         duration: 0,
         name: this.testCases[this.curTestCase].pickle.name,
@@ -119,7 +119,7 @@ export default class Runner {
       this.curTestCase++
       this.curStep=0
       let i = this.result.testCases.length-1
-      this.result.testCases[i].stop = new Date()
+      this.result.testCases[i].stop = moment.utc().format()
       this.result.testCases[i].duration = data.result.duration
       this.result.testCases[i].status = data.result.status
       this.result.testCases[i].sourceLocation = data.sourceLocation
@@ -131,7 +131,7 @@ export default class Runner {
       let i = this.result.testCases.length-1
       this.result.testCases[i].steps.push(
         { 
-        start: new Date(),
+        start: moment.utc().format(),
         stop: null,
         duration: 0,
         status: null,
@@ -143,7 +143,7 @@ export default class Runner {
       this.curStep++
       let i = this.result.testCases.length-1
       let n = this.result.testCases[i].steps.length-1
-      this.result.testCases[i].steps[n].stop = new Date()
+      this.result.testCases[i].steps[n].stop = moment.utc().format()
       this.result.testCases[i].steps[n].duration = data.result.duration
       this.result.testCases[i].steps[n].status = data.result.status
       this.result.testCases[i].steps[n].sourceLocation.uri = data.testCase.sourceLocation.uri
@@ -155,7 +155,7 @@ export default class Runner {
     else if (name === 'test-run-finished') {
       this.curTestCase=0
       this.curStep=0
-      this.result.stop = new Date()
+      this.result.stop = moment.utc().format()
       this.result.duration = data.result.duration //this.result.stop - this.result.start
       this.result.success = data.result.success
       data = this.result

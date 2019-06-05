@@ -1,46 +1,69 @@
 import { formatterHelpers } from 'cucumber'
 import {Status} from 'cucumber'
+import _ from 'lodash'
 import indentString from 'indent-string'
 
-function getAmbiguousStepResultMessage({ colorFns, testStep }) {
-  return colorFns.ambiguous(testStep.exception)
+function getAmbiguousStepResultMessage({ colorFns, issue }) {
+  return colorFns.ambiguous(issue.exception)
 }
 
-function getFailedStepResultMessage({ colorFns, testStep }) {
-  return formatterHelpers.formatError(testStep.exception, colorFns)
+function getFailedStepResultMessage({ colorFns, issue}) {
+  return formatterHelpers.formatError(issue.exception, colorFns)
 }
 
 function getPendingStepResultMessage({ colorFns }) {
   return colorFns.pending('Pending')
 }
 
-export function getStepMessage({
+export function getStepMessages({
   colorFns,
-  keywordType,
   testStep,
-  pickleStep,
 }) {
-  switch (testStep.status) {
-    case Status.AMBIGUOUS:
-      return getAmbiguousStepResultMessage({ colorFns, testStep })
-    case Status.FAILED:
-      return getFailedStepResultMessage({ colorFns, testStep })
-    case Status.UNDEFINED:
-      return getUndefinedStepResultMessage({
-        colorFns,
-        keywordType,
-        pickleStep,
-      })
-    case Status.PENDING:
-      return getPendingStepResultMessage({ colorFns })
+  let messages = ''
+/*   if (typeof testStep.issues!== 'undefined')
+  {
+  for (let issue of testStep.issues) */
+  let number = 1
+  _.each(testStep.issues, issue => 
+  {
+    let message = ''
+    switch (issue.status) {
+      case Status.AMBIGUOUS:
+        message = getAmbiguousStepResultMessage({ colorFns, issue })
+        break
+      case Status.FAILED:
+        message = getFailedStepResultMessage({ colorFns, issue })
+        break
+      case Status.UNDEFINED:
+        message = getUndefinedStepResultMessage({ colorFns })
+        break
+      case Status.PENDING:
+        message = getPendingStepResultMessage({ colorFns })
+        break
+    }
+    if (message.length>0)
+    {
+      message = getMessage({number, cnt: issue.cnt,message})
+      messages += messages.length > 0?'\n' + message: message
+    }
+    number++
+  })
+  if (messages.length > 0)
+  {
+    return messages
   }
 }
 
 function getUndefinedStepResultMessage({
-  colorFns,
-  keywordType,
-  pickleStep,
+  colorFns
 }) {
-  const message = `${'Undefined. Implement with the following Step:'}`
+  const message = `${'Undefined. Implement this step.'}`
   return colorFns.undefined(message)
+}
+
+function getMessage({
+   number, cnt, message
+}) {
+  let prefix = `${number}) `
+  return prefix +'Count: '+ cnt + '\n' +indentString(message, prefix.length)
 }

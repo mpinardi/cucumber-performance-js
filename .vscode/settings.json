@@ -1,0 +1,7 @@
+{
+    "mocha.files.glob": "**/*_spec.js",
+    "mocha.logVerbose": true,
+    "mocha.requires": [
+        "@babel/register"
+    ]
+}

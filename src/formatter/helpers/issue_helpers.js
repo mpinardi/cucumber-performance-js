@@ -1,16 +1,12 @@
 import _ from 'lodash'
-import { formatLocation } from 'cucumber'
-import { getStepMessage } from './step_result_helpers'
+import { getStepMessages } from './step_result_helpers'
 import indentString from 'indent-string'
 import {Status} from 'cucumber'
 import figures from 'figures'
 import Table from 'cli-table3'
-//import { formatterHelpersKeywordType, getStepKeywordType } from 'cucumber'
 import { buildStepArgumentIterator } from '../../step_arguments'
-//import { getStepLineToKeywordMap } from 'cucumber'
 import { formatterHelpers } from 'cucumber'
-//import { getStepLineToPickledStepMap, getStepKeyword } from 'cucumber'
-// /.formatterHelpers
+
 const CHARACTERS = {
   [Status.AMBIGUOUS]: figures.cross,
   [Status.FAILED]: figures.cross,
@@ -75,7 +71,7 @@ function formatStep({
   pickleStep,
   testStep,
 }) {
-  const { status } = testStep.status
+  const status = testStep.issues? testStep.issues[0].status: Status.PASSED
   const colorFn = colorFns[status]
 
   let identifier
@@ -89,7 +85,7 @@ function formatStep({
 
   const { actionLocation } = testStep
   if (actionLocation) {
-    text += ` # ${colorFns.location(formatLocation(actionLocation))}`
+    text += ` # ${colorFns.location(formatterHelpers.formatLocation(actionLocation))}`
   }
   text += '\n'
 
@@ -112,10 +108,8 @@ function formatStep({
     })
   }
 
-  const message = getStepMessage({
+  const message = getStepMessages({
     colorFns,
-    keywordType,
-    pickleStep,
     testStep,
   })
   if (message) {
@@ -139,7 +133,6 @@ export function formatIssue({
   let text = prefix
   const scenarioLocation = formatterHelpers.formatLocation(testCase.sourceLocation)
   text += `Scenario: ${pickle.name} # ${colorFns.location(scenarioLocation)}\n`
-  text += testCase.exception?`\t Count: ${testCase.expection.cnt}\n`:''
   const stepLineToKeywordMap = formatterHelpers.GherkinDocumentParser.getStepLineToKeywordMap(gherkinDocument)
   const stepLineToPickledStepMap = formatterHelpers.PickleParser.getStepLineToPickledStepMap(pickle)
   let isBeforeHook = true

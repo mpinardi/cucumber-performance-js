@@ -12,7 +12,7 @@ var Errors = {};
   function ErrorProto (message) {
     this.message = message || ('Unspecified ' + name);
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, arguments.callee);
+      Error.captureStackTrace(this,Error.captureStackTrace);
     }
   }
 

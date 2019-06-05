@@ -12,7 +12,7 @@ describe('Configuration', () => {
   beforeEach(async function() {
     this.tmpDir = await promisify(tmp.dir)({ unsafeCleanup: true })
     await promisify(fsExtra.mkdirp)(path.join(this.tmpDir, 'features'))
-    this.argv = ['path/to/node', 'path/to/cucumber.js']
+    this.argv = ['path/to/node', 'path/to/cucumber-perf.js']
     this.configurationOptions = {
       argv: this.argv,
       cwd: this.tmpDir,
@@ -29,19 +29,31 @@ describe('Configuration', () => {
         featureDefaultLanguage: '',
         featurePaths: [],
         formatOptions: {
-          colorsEnabled: true,
           cwd: this.tmpDir,
         },
-        formats: [{ outputTo: '', type: 'progress' }],
+        formats: [{ outputTo: '', type: '' }],
         listI18nKeywordsFor: '',
         listI18nLanguages: false,
         order: 'defined',
-        parallel: 0,
+        perfFormatOptions: {
+          cwd: this.tmpDir},
+        perfFormats: [
+          {
+            outputTo: "",
+            type: "statistics"
+          }
+        ],
+        perfRuntimeOptions: {
+          dryRun: false,
+          strict: true
+        },
         pickleFilterOptions: {
           featurePaths: ['features/**/*.feature'],
           names: [],
           tagExpression: '',
         },
+        planPaths: [],
+        planDefaultLanguage: "",
         profiles: [],
         runtimeOptions: {
           dryRun: false,
@@ -53,6 +65,11 @@ describe('Configuration', () => {
         shouldExitImmediately: false,
         supportCodePaths: [],
         supportCodeRequiredModules: [],
+        veggieFilterOptions: {
+          planPaths: ["plans/**/*.plan"],
+          names: [],
+          tagExpression: "",
+        },
       })
     })
   })
@@ -107,10 +124,10 @@ describe('Configuration', () => {
     })
   })
 
-  describe('formatters', () => {
+  describe('perf formatters', () => {
     it('adds a default', async function() {
       const formats = await getFormats(this.configurationOptions)
-      expect(formats).to.eql([{ outputTo: '', type: 'progress' }])
+      expect(formats).to.eql([{ outputTo: '', type: 'statistics' }])
     })
 
     it('splits relative unix paths', async function() {
@@ -118,7 +135,7 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'progress' },
+        { outputTo: '', type: 'statistics' },
         { outputTo: '../formatter/output.txt', type: '../custom/formatter' },
       ])
     })
@@ -128,7 +145,7 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'progress' },
+        { outputTo: '', type: 'statistics' },
         { outputTo: '/formatter/output.txt', type: '/custom/formatter' },
       ])
     })
@@ -138,7 +155,7 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'progress' },
+        { outputTo: '', type: 'statistics' },
         {
           outputTo: 'D:\\formatter\\output.txt',
           type: 'C:\\custom\\formatter',
@@ -150,12 +167,12 @@ describe('Configuration', () => {
       this.argv.push('-f', 'C:\\custom\\formatter')
       const formats = await getFormats(this.configurationOptions)
 
-      expect(formats).to.eql([{ outputTo: '', type: 'C:\\custom\\formatter' }])
+      expect(formats).to.eql([{ outputTo: '', type: 'statistics' },{ outputTo: '', type: 'C:\\custom\\formatter' }])
     })
 
     async function getFormats(options) {
       const result = await ConfigurationBuilder.build(options)
-      return result.formats
+      return result.perfFormats
     }
   })
 })

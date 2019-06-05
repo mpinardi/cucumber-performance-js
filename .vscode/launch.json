@@ -19,7 +19,7 @@
             "name": "Node1",
             "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
             "args": [
-                "--plantags","@simperiodtest","--perf-format","progress","--perf-format","summary","--plans","${workspaceRoot}\\test\\plans\\", "${workspaceRoot}\\test\\features\\"
+                "--plantags","@simperiodtest","-f","progress","-f","summary:C:\\test\\summary.txt","-p","${workspaceRoot}\\test\\plans\\", "${workspaceRoot}\\test\\features\\"
             ],
             "autoAttachChildProcesses": true,
             "cwd": "${workspaceRoot}"
@@ -39,18 +39,29 @@
             "type": "node",
             "request": "launch",
             "name": "CLI",
-            "program": "${workspaceRoot}\\dist\\cucumber-perf-cli.js",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
             "args": [
-                "plans='${workspaceRoot}\\resources\\'"
+                "-p","${workspaceRoot}\\test\\plans\\","--plantags","@simperiodtest", "-f", "progress", "-f", "summary", "${workspaceRoot}\\test\\features\\"
             ],
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "buildcli",
             "console": "internalConsole",
             "outFiles": [
                 "${workspaceRoot}/lib/cli/**.js"
             ]
      
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "CLI_Profile",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "args": [
+                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simperiodtest", "--perf-profile","default", "${workspaceRoot}\\test\\features\\"
+            ],
+            "cwd": "${workspaceRoot}",
+            "console": "internalConsole",  
         }
+
 
     ]
 }

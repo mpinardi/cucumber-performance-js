@@ -50,34 +50,34 @@ export default class ArgvParser {
         'force shutdown of the event loop when the test run has finished: cucumber will call process.exit'
       )
       .option('--fail-fast', 'abort the run on first failure')
-      .option('-pd, --perf-dry-run', 'invoke formatters without executing steps')
+      .option('--perf-dry-run', 'invoke formatters without executing steps')
       .option('--no-strict-stats', 'enable including failed results in statistics')
       .option(
-        '-pt, --plantags <EXPRESSION>',
+        '--plan-tags <EXPRESSION>',
         'only execute the features or scenarios with tags matching the expression (repeatable)',
         ArgvParser.mergeTags,
         ''
       )
       .option(
-        '--perfname <REGEXP>',
+        '--perf-name <REGEXP>',
         'only execute the simulations with name matching the expression (repeatable)',
         ArgvParser.collect,
         []
       )
       .option(
-        '--perfprofile <NAME>',
+        '--perf-profile <NAME>',
         'specify the profile to use (repeatable)',
         ArgvParser.collect,
         []
       )
       .option(
-        '--plans <GLOB|DIR|FILE[:LINE]>',
+        '-p, --plans <GLOB|DIR|FILE[:LINE]>',
         'Plan path',
         ArgvParser.collect,
         []
       )
       .option(
-        '-pf, --perf-format <TYPE[:PATH]>',
+        '-f, --perf-format <TYPE[:PATH]>',
         'specify the output format, optionally supply PATH to redirect formatter output (repeatable)',
         ArgvParser.collect,
         []
@@ -89,18 +89,6 @@ export default class ArgvParser {
         {}
       )
       .option(
-        '-r, --require <GLOB|DIR|FILE>',
-        'require files before executing features (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
-        '--require-module <NODE_MODULE>',
-        'require node modules before requiring files (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
         '--i18n-keywords <ISO 639-1>',
         'list language keywords',
         ArgvParser.validateLanguage,
@@ -113,8 +101,8 @@ export default class ArgvParser {
         ''
       )
       .option(
-        '-f, --format <TYPE[:PATH]>',
-        'specify the output format, optionally supply PATH to redirect formatter output (repeatable)',
+        '--format <TYPE[:PATH]>',
+        'Cucumber formatter specify the output format, optionally supply PATH to redirect formatter output (repeatable)',
         ArgvParser.collect,
         []
       )
@@ -149,7 +137,7 @@ export default class ArgvParser {
         'defined'
       )
       .option(
-        '-p, --profile <NAME>',
+        '--profile <NAME>',
         'specify the profile to use (repeatable)',
         ArgvParser.collect,
         []
@@ -184,80 +172,6 @@ export default class ArgvParser {
         ArgvParser.mergeJson('--world-parameters'),
         {}
       )
-     /*  .option('--fail-fast', 'abort the run on first failure')
-      .option(
-        '-f, --format <TYPE[:PATH]>',
-        'specify the output format, optionally supply PATH to redirect formatter output (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
-        '--format-options <JSON>',
-        'provide options for formatters (repeatable)',
-        ArgvParser.mergeJson('--format-options'),
-        {}
-      )
-      .option(
-        '--i18n-keywords <ISO 639-1>',
-        'list language keywords',
-        ArgvParser.validateLanguage,
-        ''
-      )
-      .option('--i18n-languages', 'list languages')
-      .option(
-        '--language <ISO 639-1>',
-        'provide the default language for feature files',
-        ''
-      )
-      .option(
-        '--name <REGEXP>',
-        'only execute the scenarios with name matching the expression (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option('--no-strict', 'succeed even if there are pending steps')
-      .option(
-        '--order <TYPE[:SEED]>',
-        'run scenarios in the specified order. Type should be `defined` or `random`',
-        'defined'
-      )
-      .option(
-        '-p, --profile <NAME>',
-        'specify the profile to use (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
-        '--parallel <NUMBER_OF_SLAVES>',
-        'run in parallel with the given number of slaves',
-        parseInt,
-        0
-      )
-      .option(
-        '-r, --require <GLOB|DIR|FILE>',
-        'require files before executing features (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
-        '--require-module <NODE_MODULE>',
-        'require node modules before requiring files (repeatable)',
-        ArgvParser.collect,
-        []
-      )
-      .option(
-        '-t, --tags <EXPRESSION>',
-        'only execute the features or scenarios with tags matching the expression (repeatable)',
-        ArgvParser.mergeTags,
-        ''
-      )
-      .option(
-        '--world-parameters <JSON>',
-        'provide parameters that will be passed to the world constructor (repeatable)',
-        ArgvParser.mergeJson('--world-parameters'),
-        {}
-      )
- */
     program.on('--help', () => {
       /* eslint-disable no-console */
       console.log(

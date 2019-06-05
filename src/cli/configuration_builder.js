@@ -76,8 +76,8 @@ export default class ConfigurationBuilder {
       supportCodeRequiredModules: this.options.requireModule,
       veggieFilterOptions: {
         planPaths: unexpandedPlanPaths,
-        names: this.options.perfname,
-        tagExpression: this.options.plantags,
+        names: this.options.perfName,
+        tagExpression: this.options.planTags,
       },
     }
   }
@@ -132,7 +132,7 @@ export default class ConfigurationBuilder {
   getFormatOptions() {
     const formatOptions = _.clone(this.options.formatOptions)
     formatOptions.cwd = this.cwd
-    _.defaults(formatOptions, { colorsEnabled: true })
+    _.defaults(formatOptions, {})
     return formatOptions
   }
 
@@ -148,7 +148,7 @@ export default class ConfigurationBuilder {
   getPerfFormatOptions() {
     const perfFormatOptions = _.clone(this.options.perfFormatOptions)
     perfFormatOptions.cwd = this.cwd
-    _.defaults(perfFormatOptions, { colorsEnabled: true })
+    _.defaults(perfFormatOptions, {})
     return perfFormatOptions
   }
 

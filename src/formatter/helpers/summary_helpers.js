@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import Moment from 'moment'
 import {Status}from 'cucumber'
 
 const STATUS_REPORT_ORDER = [

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { formatIssue, formatSummary, isStatusFailure,isStatusWarning } from './helpers'
 import Formatter from '.'
-import {Status} from 'cucumber'
 
 export default class SummaryFormatter extends Formatter {
   constructor(options) {
@@ -10,45 +9,6 @@ export default class SummaryFormatter extends Formatter {
   }
 
   logSummary(result) {
-    const failures = []
-    const warnings = []
-    result.groups.forEach((group) => {
-      if (group.hasExceptions) {
-        let g = {group: group.text,
-          testCases: []}
-        group.testCases.forEach((tc) => {
-          let t = {sourceLocation: tc.sourceLocation,
-          name: tc.name, steps: []}
-          if (tc.exceptions) {
-            t.exceptions = tc.exceptions
-            g.testCases.push(t)
-            tc.steps.forEach((ts,index) => {
-              if (isStatusFailure(ts.status)) {
-                t.steps.push({index: index,text: ts.text, status: ts.status, sourceLocation: ts.sourceLocation,exception: ts.exception})
-              } 
-            })
-          }
-        })
-        failures.push(g )
-      } 
-      else if (group.hasWarnings)
-      {
-        let g = {group: group.text,
-          testCases: []}
-        group.testCases.forEach((tc) => {
-          let t = {sourceLocation: tc.sourceLocation,
-            name: tc.name, steps: []}
-          tc.steps.forEach((ts,index) => {
-            if (isStatusWarning(ts.status)) {
-              t.steps.push({index: index,text: ts.text, status: ts.status,sourceLocation: ts.sourceLocation})
-            } 
-          })
-          g.testCases.push(t)
-        })
-        warnings.push(g)
-      }
-    })
-    this.log('\n')
     this.log(
       formatSummary({
         colorFns: this.colorFns,
@@ -56,33 +16,31 @@ export default class SummaryFormatter extends Formatter {
       })
     )
     this.log('\n')
-    if (failures.length > 0) {
-      this.logIssues({ issues: failures, title: 'Failures' })
-    }
-    if (warnings.length > 0) {
-      this.logIssues({ issues: warnings, title: 'Warnings' })
+    if (_.findIndex(result.groups,{hasIssues:true})>=0){
+      this.logIssues({ result: result, title: 'Issues' })
     }
   }
 
-  logIssues({ issues, title }) {
+  logIssues({ result, title }) {
     this.log(`${title}:\n`)
-    issues.forEach((group, index) => {
-      group.testCases.forEach((testCase, index) => {
-        const {
-          gherkinDocument,
-          pickle,
-        } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
-        //pickle.steps[].locations[].line
-        this.log(
-          formatIssue({
-            colorFns: this.colorFns,
+    result.groups.forEach((group) => {
+      if (group.hasIssues) {
+        group.testCases.forEach((testCase, index) => {
+          const {
             gherkinDocument,
-            number: index + 1,
             pickle,
-            testCase,
-          })
-        )
-      })
+          } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
+          this.log(
+            formatIssue({
+              colorFns: this.colorFns,
+              gherkinDocument,
+              number: index + 1,
+              pickle,
+              testCase,
+            })
+          )
+        })
+      }
     })
   }
 }

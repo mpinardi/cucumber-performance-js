@@ -1,0 +1,5 @@
+colors: true
+full-trace: true
+recursive: true
+reporter: dot
+require: '@babel/register'

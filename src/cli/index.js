@@ -1,6 +1,6 @@
 //import { EventDataCollector } from 'cucumber'
 import { formatterHelpers } from 'cucumber'
-import { getTestCases,getTestCasesFromFilesystem} from 'cucumber'
+import { getTestCasesFromFilesystem} from 'cucumber'
 import { getExpandedArgv, getSimulationsFromFilesystem } from './helpers'
 import { validateInstall } from './install_validator'
 import * as I18n from './i18n'
@@ -51,6 +51,9 @@ export default class Cli {
         //supportCodeLibrary,
         ...formatOptions,
       }
+      if (!formatOptions.hasOwnProperty('colorsEnabled')) {
+        typeOptions.colorsEnabled = !!stream.isTTY
+      }
       return FormatterBuilder.build(type, typeOptions)
     })
     return function() {
@@ -58,13 +61,6 @@ export default class Cli {
         Promise.promisify(::stream.end)()
       )
     }
-  }
-
-  getCucumberSupportCodeLibrary({ supportCodeRequiredModules, supportCodePaths }) {
-    supportCodeRequiredModules.map(module => require(module))
-    SupportCodeLibraryBuilder.reset(this.cwd)
-    supportCodePaths.forEach(codePath => require(codePath))
-    return SupportCodeLibraryBuilder.finalize()
   }
 
   async run() {
@@ -78,7 +74,6 @@ export default class Cli {
       this.stdout.write(I18n.getKeywords(configuration.listI18nKeywordsFor))
       return { success: true }
     }
-    //const supportCodeLibrary = this.getSupportCodeLibrary(configuration)
     const eventBroadcaster = new EventEmitter()
     const cleanup = await this.initializeFormatters({
       eventBroadcaster,

@@ -7,12 +7,23 @@ export default class Formatter {
       _.pick(options, [
         'colorFns',
         'cwd',
+        'eventBroadcaster',
         'eventDataCollector',
         'log',
-        'snippetBuilder',
         'stream',
         'supportCodeLibrary',
       ])
     )
+  }
+
+  updateLog(stream)
+  {
+    this.log = ::stream.write
+    this.stream = stream
+  }
+
+  isStdio()
+  {
+    return this.stream._isStdio
   }
 }

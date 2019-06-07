@@ -399,16 +399,13 @@ export default class Statistics {
               cts.issues = [issue]
             }
             else if (ts.exception) {
-                let ex = _.find(cts.issues, { 'exception.message': ts.exception.message })
+                let ex = _.find(cts.issues, function(o) { return o.exception.message ===ts.exception.message;})
                 if (ex)
                 {
                   ex.cnt++
                 } else
                 {
-                  ex.exception = ts.exception
-                  ex.cnt = 1
-                  ex.status = ts.status
-                  cts.issues.push(ex)
+                  cts.issues.push({exception: ts.exception,cnt: 1,status:ts.status})
                 }
             }
             else
@@ -419,10 +416,7 @@ export default class Statistics {
                 wrn.cnt++
               } else
               {
-                wrn.exception = ts.exception
-                wrn.cnt = 1
-                wrn.status = ts.status
-                cts.issues.push(wrn)
+                cts.issues.push({exception: ts.exception,cnt: 1,status:ts.status})
               }
             }
           }

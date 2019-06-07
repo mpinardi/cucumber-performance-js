@@ -5,5 +5,6 @@ var common = [
   ].join(' ')
   
   module.exports = {
-    default: common,
+    test: common,
+    //default: common //this would allways be included
   }

@@ -3,6 +3,7 @@ import commandTypes from '../command_types'
 import EventEmitter from 'events'
 import serializeError from 'serialize-error'
 import StackTraceFilter from '../stack_trace_filter'
+import moment from 'moment'
 import { Runtime,supportCodeLibraryBuilder} from 'cucumber'
 
 const EVENTS = [

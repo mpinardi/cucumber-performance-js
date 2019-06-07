@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import commandTypes from '../command_types'
+import Slice from '../slice'
 import path from 'path'
 import Status from 'cucumber'
 import crossSpawn from 'cross-spawn'
@@ -147,7 +148,8 @@ export default class Director {
                         ran: 0,
                         running: 0,
                         text: group.text,
-                        processId: -1
+                        processId: -1,
+                        arguments: group.arguments
       })
       this.result.groups.push({
         start: null,
@@ -169,12 +171,14 @@ export default class Director {
       this.setCurGroupThreads(0);
       this.ramper = setInterval(this.ramp.bind(this), rampPeriod);
     }
+    
     this.manageRun()
     this.onFinish = done
   }
 
   async manageRun() {
     let curTime = new Date()
+    
     if (this.executing)
     {
       if (this.endRamp == null) {
@@ -200,7 +204,6 @@ export default class Director {
             }
         }
     }
-    //console.log("running:"+this.running + " max:" + this.maxRunners)
   }
   
   async ramp()
@@ -249,11 +252,12 @@ export default class Director {
         let pg = this.groups[gId];
         if (pg.running < pg.runners && (this.scheduledRuntime != null ||pg.ran < pg.count)) {
           pg.running++
+          let slice = this.getSlice(pg)
           for (let testCase of this.testCases)
-          {
+          { 
             if (testCase.uri.endsWith(pg.text))
-            {
-              testCases.push(testCase);
+            {    
+              testCases.push(slice!=null?slice.parseTestCase(testCase):testCase);
             }
           }
           //const skip =
@@ -317,5 +321,20 @@ export default class Director {
     var ms = moment(end).diff(moment(start));
     return moment.duration(ms);
     //var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+  }
+
+  getSlice(group)
+	{
+    var rows = []
+    if (group.arguments[0].rows)
+    {
+        rows.push(group.arguments[0].rows[0])
+        let sel = ((group.ran==0?group.running:group.ran) % group.arguments[0].rows.length);
+        if (sel===0) 
+          sel++;
+        rows.push(group.arguments[0].rows[sel]);
+        return new Slice(rows);
+    }
+    return null
   }
 }

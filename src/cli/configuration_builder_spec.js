@@ -39,7 +39,7 @@ describe('Configuration', () => {
           cwd: this.tmpDir},
         perfFormats: [
           {
-            outputTo: "",
+            options: [''],
             type: "statistics"
           }
         ],
@@ -127,7 +127,7 @@ describe('Configuration', () => {
   describe('perf formatters', () => {
     it('adds a default', async function() {
       const formats = await getFormats(this.configurationOptions)
-      expect(formats).to.eql([{ outputTo: '', type: 'statistics' }])
+      expect(formats).to.eql([{options: [''], type: 'statistics' }])
     })
 
     it('splits relative unix paths', async function() {
@@ -135,8 +135,8 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'statistics' },
-        { outputTo: '../formatter/output.txt', type: '../custom/formatter' },
+        {options: [''], type: 'statistics' },
+        { options: ['../formatter/output.txt'], type: '../custom/formatter' },
       ])
     })
 
@@ -145,8 +145,8 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'statistics' },
-        { outputTo: '/formatter/output.txt', type: '/custom/formatter' },
+        {options: [''], type: 'statistics' },
+        { options: ['/formatter/output.txt'], type: '/custom/formatter' },
       ])
     })
 
@@ -155,9 +155,9 @@ describe('Configuration', () => {
       const formats = await getFormats(this.configurationOptions)
 
       expect(formats).to.eql([
-        { outputTo: '', type: 'statistics' },
+        {options: [''], type: 'statistics' },
         {
-          outputTo: 'D:\\formatter\\output.txt',
+          options: ['D:\\formatter\\output.txt'],
           type: 'C:\\custom\\formatter',
         },
       ])
@@ -167,7 +167,7 @@ describe('Configuration', () => {
       this.argv.push('-f', 'C:\\custom\\formatter')
       const formats = await getFormats(this.configurationOptions)
 
-      expect(formats).to.eql([{ outputTo: '', type: 'statistics' },{ outputTo: '', type: 'C:\\custom\\formatter' }])
+      expect(formats).to.eql([{ options: [''], type: 'statistics' },{options: [''], type: 'C:\\custom\\formatter' }])
     })
 
     async function getFormats(options) {

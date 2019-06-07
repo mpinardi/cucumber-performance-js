@@ -139,8 +139,10 @@ export default class ConfigurationBuilder {
   getFormats() {
     const mapping = { '': '' }
     this.options.format.forEach(format => {
-      const [type, outputTo] = OptionSplitter.split(format)
-      mapping[outputTo || ''] = type
+      let result = OptionSplitter.split(format)
+      const type = result.type
+      const outputTo = result.uri
+      mapping[outputTo] = type
     })
     return _.map(mapping, (type, outputTo) => ({ outputTo, type }))
   }
@@ -153,12 +155,15 @@ export default class ConfigurationBuilder {
   }
 
   getPerfFormats() {
-    const mapping = {'statistics':''}
+    const list = [{type:'statistics',uri:'',options:[]}]
     this.options.perfFormat.forEach(format => {
-      const [type, outputTo] = OptionSplitter.split(format)
-      mapping[type] = outputTo  || ''
+      const v = OptionSplitter.split(format)
+      if (_.findIndex(list,v)===-1)
+      {
+        list.push(v)
+      }
     })
-    return _.map(mapping, (outputTo,type) => ({ type, outputTo }))
+    return list
   }
 
   async getUnexpandedFeaturePaths() {

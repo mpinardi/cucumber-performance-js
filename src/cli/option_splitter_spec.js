@@ -12,17 +12,17 @@ describe('OptionSplitter', () => {
     {
       description: 'splits relative unix paths',
       input: '../custom/formatter:../formatter/output.txt',
-      output: ['../custom/formatter', '../formatter/output.txt'],
+      output: ['../custom/formatter', ['../formatter/output.txt']],
     },
     {
       description: 'splits absolute unix paths',
       input: '/custom/formatter:/formatter/output.txt',
-      output: ['/custom/formatter', '/formatter/output.txt'],
+      output: ['/custom/formatter', ['/formatter/output.txt']],
     },
     {
       description: 'splits absolute windows paths',
       input: 'C:\\custom\\formatter:C:\\formatter\\output.txt',
-      output: ['C:\\custom\\formatter', 'C:\\formatter\\output.txt'],
+      output: ['C:\\custom\\formatter', ['C:\\formatter\\output.txt']],
     },
     {
       description: 'does not split a single absolute windows paths',

@@ -2,8 +2,9 @@
 @planPosTest
 Plan: test
 
+#6
 @deadsimple
-Simulation: simulation 1
+Simulation: simulation deadsimple
 Group test.feature
 	#number of threads
 	Runners: 1
@@ -13,8 +14,9 @@ Group test.feature
 #thread will wait between +-50% of this mean
 RandomWait: 00:00:02
 
+#4
 @simple
-Simulation: simulation 1
+Simulation: simulation simple
 Group test.feature
 	#number of threads
 	Runners: 2
@@ -29,10 +31,10 @@ Group test.feature
 #thread will wait between +-50% of this mean
 RandomWait: 00:00:02
 
-
+#4
 @simPos
 @tskip
-Simulation: simulation 1
+Simulation: simulation 1 slices
 Group test.feature
 	|value out|
 	|changed value 1|
@@ -40,7 +42,7 @@ Group test.feature
 	#number of threads
 	Runners: 2
 	#total number of threads to run.
-	Count: 2
+	Count: 1
 Group test.feature
 	#slices
 	#these values will replace property "value out"
@@ -55,6 +57,7 @@ Group test.feature
 #thread will wait between +-50% of this mean
 RandomWait: 00:00:02
 
+#4
 @bskip
 @tskip
 Simulation: simulation 1 skip
@@ -75,10 +78,9 @@ Group test.feature
 	#total number of threads to run.
 	Count: 2
 	
-	@bskip
-	@outputtest
-	#junit test case
-	Simulation: simulation test
+@bskip
+@outputtest
+Simulation: simulation test
 	Group test.feature
 	Runners: 3
 	Count: 6

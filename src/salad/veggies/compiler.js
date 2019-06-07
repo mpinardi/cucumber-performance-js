@@ -121,7 +121,7 @@ function Compiler() {
   function veggieGroup(group) {
     return {
       text: group.text,
-      argument: createVeggieArguments(group.argument, [], []),
+      arguments: createVeggieArguments(group.argument, [], []),
       runners:(group.runners!= undefined)?group.runners.text:'0',
       count: (group.count!= undefined)?group.count.text:'0',
       locations: [veggieGroupLocation(group)]

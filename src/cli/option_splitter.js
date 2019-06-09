@@ -9,7 +9,7 @@ export default class OptionSplitter {
         return memo
       }, []);
       result[1] =result.length>1? result[1]: ''
-      result[2] =result.length>2? splitOptions(result[2]): ['']
+      result[2] =result.length>2? splitOptions(result[2]): []
       return {type:result[0],uri:result[1],options:result[2]}
     }
   }

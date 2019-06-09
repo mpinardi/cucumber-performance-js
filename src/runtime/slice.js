@@ -4,6 +4,15 @@ export default class Slice {
     constructor(rows) {
         this.rows = rows
     }
+
+    parseTestCases(testCases) {
+        let tcs = []
+        for (let testCase of testCases)
+        {
+            tcs.push(this.parseTestCase(testCase))
+        }
+        return tcs
+    }
     parseTestCase(testCase) {
         let tc = _.cloneDeep(testCase);
         for(let step of tc.pickle.steps)

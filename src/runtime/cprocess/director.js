@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import commandTypes from '../command_types'
+import TestCaseFilter from '../test_case_filter'
 import Slice from '../slice'
 import path from 'path'
 import Status from 'cucumber'
@@ -54,6 +55,7 @@ export default class Director {
     this.simulation = null
     this.scheduledRuntime = null
     this.ramper = null
+    this.testCaseFilter = new TestCaseFilter(this.testCases)
   }
 
   parseRunnerMessage(runner, message) {
@@ -142,6 +144,7 @@ export default class Director {
     for (let group of simulation.veggie.groups){
       this.maxRunners += parseInt(group.runners)
       this.maxRan += parseInt(group.count)
+      let testCases = this.testCaseFilter.filter(group.text)
       this.groups.push({count: parseInt(group.count),
                         runners: parseInt(group.runners),
                         maxRunners: parseInt(group.runners),
@@ -149,7 +152,8 @@ export default class Director {
                         running: 0,
                         text: group.text,
                         processId: -1,
-                        arguments: group.arguments
+                        arguments: group.arguments,
+                        testCases: testCases
       })
       this.result.groups.push({
         start: null,
@@ -176,7 +180,7 @@ export default class Director {
     this.onFinish = done
   }
 
-  async manageRun() {
+  manageRun() {
     let curTime = new Date()
     
     if (this.executing)
@@ -206,7 +210,7 @@ export default class Director {
     }
   }
   
-  async ramp()
+  ramp()
   {
     let curTime = new Date()
     if (this.endRamp != null) {
@@ -253,13 +257,7 @@ export default class Director {
         if (pg.running < pg.runners && (this.scheduledRuntime != null ||pg.ran < pg.count)) {
           pg.running++
           let slice = this.getSlice(pg)
-          for (let testCase of this.testCases)
-          { 
-            if (testCase.uri.endsWith(pg.text))
-            {    
-              testCases.push(slice!=null?slice.parseTestCase(testCase):testCase);
-            }
-          }
+          let testCases = slice!=null?slice.parseTestCases(pg.testCases):pg.testCases
           //const skip =
           //this.options.dryRun || (this.options.failFast && !this.result.success)
           runner.groupId = gId

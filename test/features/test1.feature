@@ -1,6 +1,7 @@
 Feature: test
 
 @only
+@onlywait
 Scenario: scenario 1
 When Check 2
 When System out "value out"

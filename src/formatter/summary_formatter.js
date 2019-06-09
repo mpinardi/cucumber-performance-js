@@ -26,19 +26,22 @@ export default class SummaryFormatter extends Formatter {
     result.groups.forEach((group) => {
       if (group.hasIssues) {
         group.testCases.forEach((testCase, index) => {
-          const {
-            gherkinDocument,
-            pickle,
-          } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
-          this.log(
-            formatIssue({
-              colorFns: this.colorFns,
+          if (testCase.hasIssues)
+          {
+            const {
               gherkinDocument,
-              number: index + 1,
               pickle,
-              testCase,
-            })
-          )
+            } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
+            this.log(
+              formatIssue({
+                colorFns: this.colorFns,
+                gherkinDocument,
+                number: index + 1,
+                pickle,
+                testCase,
+              })
+            )
+            }
         })
       }
     })

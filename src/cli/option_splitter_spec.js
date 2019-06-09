@@ -7,27 +7,27 @@ describe('OptionSplitter', () => {
     {
       description: "doesn't split when nothing to split on",
       input: '../custom/formatter',
-      output: ['../custom/formatter'],
+      output: {type:'../custom/formatter', uri:'', options:[]},
     },
     {
       description: 'splits relative unix paths',
       input: '../custom/formatter:../formatter/output.txt',
-      output: ['../custom/formatter', ['../formatter/output.txt']],
+      output: {type:'../custom/formatter', uri:'../formatter/output.txt', options:[]},
     },
     {
       description: 'splits absolute unix paths',
       input: '/custom/formatter:/formatter/output.txt',
-      output: ['/custom/formatter', ['/formatter/output.txt']],
+      output: {type:'/custom/formatter', uri:'/formatter/output.txt', options:[]},
     },
     {
       description: 'splits absolute windows paths',
       input: 'C:\\custom\\formatter:C:\\formatter\\output.txt',
-      output: ['C:\\custom\\formatter', ['C:\\formatter\\output.txt']],
+      output: {type:'C:\\custom\\formatter', uri:'C:\\formatter\\output.txt', options:[]},
     },
     {
       description: 'does not split a single absolute windows paths',
       input: 'C:\\custom\\formatter',
-      output: ['C:\\custom\\formatter'],
+      output: {type:'C:\\custom\\formatter', uri:'', options:[]},
     },
   ]
 

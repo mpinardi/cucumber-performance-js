@@ -143,12 +143,14 @@ export function formatIssue({
     //testStep.sourceLocation= {line:_.last(pickle.steps[testStep.index].locations).line,uri:testCase.sourceLocation.uri}
     if (testStep.sourceLocation) {
       pickleStep = stepLineToPickledStepMap[testStep.sourceLocation.line]
-      keyword = formatterHelpers.PickleParser.getStepKeyword({ pickleStep, stepLineToKeywordMap })
-      keywordType = formatterHelpers.getStepKeywordType({
-        keyword,
-        language: gherkinDocument.feature.language,
-        previousKeywordType,
-      })
+      if (pickleStep){
+        keyword = formatterHelpers.PickleParser.getStepKeyword({ pickleStep, stepLineToKeywordMap })
+        keywordType = formatterHelpers.getStepKeywordType({
+          keyword,
+          language: gherkinDocument.feature.language,
+          previousKeywordType,
+        })
+      }
     }
     const formattedStep = formatStep({
       colorFns,

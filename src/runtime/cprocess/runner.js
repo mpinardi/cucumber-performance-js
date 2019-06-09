@@ -51,6 +51,7 @@ export default class Runner {
     this.testCases = null
     this.curTestCase = 0
     this.curStep = 0
+    this.locations= []
     EVENTS.forEach(name => {
       this.eventBroadcaster.on(name, data => {
         if (data != undefined)
@@ -67,7 +68,7 @@ export default class Runner {
     })
   }
 
-  async initialize({
+  initialize({
     options,
     supportCodeRequiredModules,
     supportCodePaths,
@@ -85,7 +86,7 @@ export default class Runner {
    this.sendMessage({ command: commandTypes.READY })
   }
 
-  async finalize() {
+   finalize() {
     if (this.filterStacktraces) {
       this.stackTraceFilter.unfilter()
     }
@@ -104,7 +105,7 @@ export default class Runner {
 
   processMessage(name,data) {
     serializeResultExceptionIfNecessary(data)
-    if (name === 'test-case-started') {
+    if (name === 'test-case-prepared') {
       this.result.testCases.push(
       {
         steps: [],
@@ -115,7 +116,10 @@ export default class Runner {
         status: null,
         sourceLocation: null
       })
-    }
+      for (let step of data.steps){
+        this.locations.push(step)
+      }
+    } 
     else if (name === 'test-case-finished') {
       this.curTestCase++
       this.curStep=0
@@ -130,6 +134,7 @@ export default class Runner {
     }
     else if (name === 'test-step-started') {
       let i = this.result.testCases.length-1
+      let n = this.result.testCases[i].steps.length
       this.result.testCases[i].steps.push(
         { 
         start: moment.utc().format(),
@@ -137,7 +142,9 @@ export default class Runner {
         duration: 0,
         status: null,
         text: this.testCases[this.curTestCase].pickle.steps[this.curStep].text,
-        sourceLocation: {line: _.last(this.testCases[this.curTestCase].pickle.steps[this.curStep].locations).line,uri:null}
+        sourceLocation: this.locations[n].sourceLocation,
+        actionLocation: this.locations[n].actionLocation
+        //{line: _.last(this.testCases[this.curTestCase].pickle.steps[this.curStep].locations).line,uri:null}
         })
     }
     else if (name === 'test-step-finished') {
@@ -148,7 +155,6 @@ export default class Runner {
       this.result.testCases[i].steps[n].duration = data.result.duration
       this.result.testCases[i].steps[n].status = data.result.status
       this.result.testCases[i].steps[n].sourceLocation.uri = data.testCase.sourceLocation.uri
-      //this.result.testCases[i].steps[n].sourceLocation = data.testCase.sourceLocation
       if (data.result.exception) {
        this.result.testCases[i].steps[n].exception = data.result.exception
       }

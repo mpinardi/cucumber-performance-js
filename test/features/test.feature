@@ -1,6 +1,7 @@
 Feature: test
 
 @only
+@only1
 Scenario: scenario 1
 When Check 2
 When System out "value out"

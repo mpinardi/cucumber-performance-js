@@ -35,7 +35,7 @@ RandomWait: 00:00:02
 @simPos
 @tskip
 Simulation: simulation 1 slices
-Group @only1 @only2
+Group @only1@only2
 	|value out|
 	|changed value 1|
 	|changed value 2|

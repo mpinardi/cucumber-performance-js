@@ -41,7 +41,7 @@
             "name": "CLI",
             "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
             "args": [
-                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simPos", "-f", "progress", "-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2", "${workspaceRoot}\\test\\features\\"
+                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simPos", "-f", "progress",  "-f","chartpoints:C:\\test\\chartp.txt:6","-f", "logger:C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2", "${workspaceRoot}\\test\\features\\"
             ],
             "cwd": "${workspaceRoot}",
             "console": "internalConsole",

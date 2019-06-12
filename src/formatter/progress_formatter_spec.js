@@ -102,7 +102,7 @@ describe('ProgressFormatter', () => {
           beforeEach(function() {
             const group = this.group
             const result = this.result
-            const eventData = { ...result, group}
+            const eventData = { result, group}
             this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
           })
           
@@ -118,7 +118,7 @@ describe('ProgressFormatter', () => {
         this.result.success = false
         const group = this.group
         const result = this.result
-        const eventData = { ...result, group}
+        const eventData = { result, group}
         this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
       })
       
@@ -137,7 +137,7 @@ describe('ProgressFormatter', () => {
         this.group.ran=5
         const group = this.group
         const result = this.result
-        const eventData = { ...result, group}
+        const eventData ={ result, group}
         this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
       })
       

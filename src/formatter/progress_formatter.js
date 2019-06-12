@@ -23,16 +23,16 @@ export default class ProgressFormatter extends Formatter {
       let group =  this.groups[i]
       line += (i>0)?" | ":""
       let ran = group.ran
-      if (cur == i && data.success != undefined)
+      if (cur == i && data.result && data.result.success != undefined)
       {
-        ran =  (data.success == true) ? this.colorFns[Status.PASSED](ran) : this.colorFns[Status.FAILED](ran)
+        ran =  (data.result.success == true) ? this.colorFns[Status.PASSED](ran) : this.colorFns[Status.FAILED](ran)
         line+=trimFeature({name:group.text}) + ":" + group.running + "-" + group.maxRunners + ">" + ran
       }
       else{
         line+=trimFeature({name:group.text}) + ":" + group.running + "-" + group.maxRunners + ">" + ran
       }
     }
-    this.log(this.bufferLength(line, data.success))
+    this.log(this.bufferLength(line, data.result?data.result.success:undefined))
   }
 
   bufferLength(line, success) {

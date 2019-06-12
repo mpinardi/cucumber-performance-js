@@ -5,8 +5,8 @@ const ARGUMENT_POSTFIX_PATTERN = "([^|]+)\\|(.*)"
 const ARGUMENT_POSTFIX_SEPARATOR_PATTERN = "-|\\[|\\]|\\(|\\)|\\{|\\}|_"
 const ARGUMENT_POSTFIX_PART_PATTERN = "(?:(?!#).)+?(?=@)|(?:(?!@).)+?(?=#)|(?:#).*$|(?:@).*$"
 
-export function getPathWithPrefix({uri,count}) {
-    let argumentWithPostfix = uri.match(ARGUMENT_POSTFIX_PATTERN)
+export function getPathWithPrefix({outputTo,count}) {
+    let argumentWithPostfix = outputTo.match(ARGUMENT_POSTFIX_PATTERN)
     let path
     let argument;
 
@@ -14,7 +14,7 @@ export function getPathWithPrefix({uri,count}) {
         path = argumentWithPostfix[1]
         argument = argumentWithPostfix[2]
     } else {
-        path = uri;
+        path = outputTo;
         argument = "";
     }
     return path + parsePostFix(argument, count);

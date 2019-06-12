@@ -1,13 +1,11 @@
-//import EventProtocolFormatter from './event_protocol_formatter'
+
 import getColorFns from './get_color_fns'
-//import JavascriptSnippetSyntax from './step_definition_snippet_builder/javascript_snippet_syntax'
-//import JsonFormatter from './json_formatter'
 import ProgressFormatter from './progress_formatter'
 import path from 'path'
 import SummaryFormatter from './summary_formatter'
 import Statistics from './statistics'
-//import UsageFormatter from './usage_formatter'
-//import UsageJsonFormatter from './usage_json_formatter'
+import ChartPointsFormatter from './chartPoints_formatter'
+import LoggerFormatter from './logger_formatter'
 
 export default class FormatterBuilder {
   static build(type, options) {
@@ -21,18 +19,16 @@ export default class FormatterBuilder {
 
   static getConstructorByType(type, options) {
     switch (type) {
-      case 'json':
-        return JsonFormatter
+      case 'chartpoints':
+        return ChartPointsFormatter
+      case 'logger':
+        return LoggerFormatter
       case 'summary':
         return SummaryFormatter
       case 'statistics':
         return Statistics
       case 'progress':
         return ProgressFormatter
-      case 'usage':
-        return UsageFormatter
-      case 'usage-json':
-        return UsageJsonFormatter
       default:
         return FormatterBuilder.loadCustomFormatter(type, options)
     }

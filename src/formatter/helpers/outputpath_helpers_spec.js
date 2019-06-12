@@ -6,7 +6,7 @@ describe('OutputPath Helpers', () => {
   describe('formatPath', () => {
     describe('numbers', () => {
       beforeEach(function() {
-        this.result = getPathWithPrefix({uri:"C:/test/summary|#1.text",count:2})
+        this.result = getPathWithPrefix({outputTo:"C:/test/summary|#1.text",count:2})
       })
 
         it('path is correctly formated', function() {
@@ -17,7 +17,7 @@ describe('OutputPath Helpers', () => {
     })
     describe('padded numbers', () => {
       beforeEach(function() {
-        this.result = getPathWithPrefix({uri:"C:/test/summary|#0001.text",count:2})
+        this.result = getPathWithPrefix({outputTo:"C:/test/summary|#0001.text",count:2})
       })
       it('path is correctly formated', function() {
           expect(this.result).to.eql(
@@ -27,7 +27,7 @@ describe('OutputPath Helpers', () => {
     })
     describe('2 padded numbers', () => {
       beforeEach(function() {
-        this.result = getPathWithPrefix({uri:"C:/test/summary|#0001#01.text",count:2})
+        this.result = getPathWithPrefix({outputTo:"C:/test/summary|#0001#01.text",count:2})
       })
         it('path is correctly formated', function() {
           expect(this.result).to.eql(
@@ -37,7 +37,7 @@ describe('OutputPath Helpers', () => {
       })
     describe('2 padded numbers with seperator _', () => {
       beforeEach(function() {
-        this.result = getPathWithPrefix({uri:"C:/test/summary|#0001_#01.text",count:2})
+        this.result = getPathWithPrefix({outputTo:"C:/test/summary|#0001_#01.text",count:2})
       })
         it('path is correctly formated', function() {
           expect(this.result).to.eql(
@@ -47,7 +47,7 @@ describe('OutputPath Helpers', () => {
     })
     describe('2 padded numbers with seperator -', () => {
       beforeEach(function() {
-        this.result = getPathWithPrefix({uri:"C:/test/summary|#0001-#01.text",count:2})
+        this.result = getPathWithPrefix({outputTo:"C:/test/summary|#0001-#01.text",count:2})
       })
       it('path is correctly formated', function() {
           expect(this.result).to.eql(

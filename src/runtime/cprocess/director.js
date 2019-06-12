@@ -75,7 +75,8 @@ export default class Director {
           this.ran += 1
           this.result.groups[runner.groupId].results.push(message.data)
           const group = this.groups[runner.groupId]
-          const eventData = { ...message.data, group}
+          //...message.data
+          const eventData = { result:message.data, group}
           this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
           this.manageRun()
         } else if (message.name === 'test-run-started'){     

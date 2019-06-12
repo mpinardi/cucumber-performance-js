@@ -1,6 +1,5 @@
 import { beforeEach, describe, it } from 'mocha'
 import { expect } from 'chai'
-import { createMock } from './test_helpers'
 import getColorFns from './get_color_fns'
 import {Status} from 'cucumber'
 import SummaryFormatter from './summary_formatter'
@@ -22,7 +21,7 @@ describe('SummaryFormatter', () => {
       eventBroadcaster: this.eventBroadcaster,
       eventDataCollector: new formatterHelpers.EventDataCollector(this.eventBroadcaster),
       log: logFn,
-      snippetBuilder: createMock({ build: 'snippet' }),
+      options:[]
     })
   })
 

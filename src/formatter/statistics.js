@@ -7,7 +7,7 @@ export default class Statistics {
     this.options = options
     this.startPeriod
     this.period
-    this.maxPoints = 20
+    this.maxPoints = this.options.options.length>0?_.parseInt(this.options.options[0]):20
     this.calculatedResult = {
       start: null,
       stop: null,
@@ -50,6 +50,11 @@ export default class Statistics {
       chartPoints: []
     } */
     options.eventBroadcaster.on('simulation-run-finished', ::this.generateStatistics)
+    options.eventBroadcaster.on('simulation-statistics-maxpoints', ::this.setMaxPoints)
+  }
+
+  setMaxPoints(i) {
+    this.maxPoints=i
   }
 
   generateStatistics({data}) {
@@ -276,7 +281,7 @@ export default class Statistics {
           uri: null, //feature
           status: null,
         } */
-        let ptc = _.find(periodGroup.testCases, { 'name': tc.name });
+        let ptc = _.find(periodGroup.testCases, { 'name': tc.name, 'sourceLocation': tc.sourceLocation });
         if (ptc == undefined)
         {
             ptc =
@@ -295,7 +300,7 @@ export default class Statistics {
           periodGroup.testCases.push(ptc)
           //periodGroup.uri = tc.uri
         }
-        let ctc = _.find(result.testCases, { 'name': tc.name });
+        let ctc = _.find(result.testCases, { 'name': tc.name, 'sourceLocation': tc.sourceLocation});
         if (ctc == undefined)
         {
           ctc = {
@@ -474,4 +479,5 @@ export default class Statistics {
   getPeriod(time, times) {
 		return time.asSeconds() / times;
   }
+
 }

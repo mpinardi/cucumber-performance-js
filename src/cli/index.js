@@ -32,9 +32,10 @@ export default class Cli {
   async updateFormatters({
     count
   }) {
-    await Promise.map(this.formatters, async ({formatter, uri}) => {
+    await Promise.map(this.formatters, async ({formatter, outputTo}) => {
       if(typeof formatter.isStdio === "function" && !formatter.isStdio()) {
-        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({uri,count})), 'w')
+        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({outputTo,count})), 'w')
+        fs.createWriteStream
         const stream = fs.createWriteStream(null, { fd })
         formatter.updateLog(stream)
         this.streamsToClose.push(stream)
@@ -49,10 +50,10 @@ export default class Cli {
     strict
   }) {
     const eventDataCollector = new formatterHelpers.EventDataCollector(eventBroadcaster)
-    this.formatters=(await Promise.map(formats, async ({ type, uri, options}) => {
+    this.formatters=(await Promise.map(formats, async ({ type, outputTo, options}) => {
       let stream = this.stdout
-      if (uri) {
-        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({uri,count:0})), 'w')
+      if (outputTo) {
+        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({outputTo,count:0})), 'w')
         stream = fs.createWriteStream(null, { fd })
         this.streamsToClose.push(stream)
       }
@@ -62,14 +63,13 @@ export default class Cli {
         log: ::stream.write,
         stream,
         strict,
-        //supportCodeLibrary,
         ...formatOptions,
         options
       }
       if (!formatOptions.hasOwnProperty('colorsEnabled')) {
         typeOptions.colorsEnabled = !!stream.isTTY
       }
-      return {formatter:FormatterBuilder.build(type, typeOptions), uri: uri}
+      return {formatter:FormatterBuilder.build(type, typeOptions), outputTo: outputTo}
     }))
   }
 

@@ -12,6 +12,7 @@ export default class Formatter {
         'log',
         'stream',
         'supportCodeLibrary',
+        'options'
       ])
     )
   }

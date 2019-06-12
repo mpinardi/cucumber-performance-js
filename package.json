@@ -1,6 +1,6 @@
 {
   "name": "cucumber-perf",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "The js implimentation of Cucumber-Perf",
   "keywords": [
     "testing",
@@ -9,7 +9,8 @@
     "cucumber",
     "gherkin",
     "tests",
-    "performance"
+    "performance",
+    "load"
   ],
   "directories": {
     "lib": "./lib"

@@ -141,7 +141,7 @@ export default class ConfigurationBuilder {
     this.options.format.forEach(format => {
       let result = OptionSplitter.split(format)
       const type = result.type
-      const outputTo = result.uri
+      const outputTo = result.outputTo
       mapping[outputTo] = type
     })
     return _.map(mapping, (type, outputTo) => ({ outputTo, type }))
@@ -155,7 +155,7 @@ export default class ConfigurationBuilder {
   }
 
   getPerfFormats() {
-    const list = [{type:'statistics',uri:'',options:[]}]
+    const list = [{type:'statistics',outputTo:'',options:[]}]
     this.options.perfFormat.forEach(format => {
       const v = OptionSplitter.split(format)
       if (_.findIndex(list,v)===-1)

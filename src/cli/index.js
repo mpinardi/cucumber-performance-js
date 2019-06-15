@@ -1,6 +1,9 @@
-//import { EventDataCollector } from 'cucumber'
-import { formatterHelpers } from 'cucumber'
-import { getTestCasesFromFilesystem} from 'cucumber'
+import {
+  formatterHelpers,
+  getTestCasesFromFilesystem,
+  PickleFilter,
+} from 'cucumber'
+
 import { getExpandedArgv, getSimulationsFromFilesystem } from './helpers'
 import { validateInstall } from './install_validator'
 import * as I18n from './i18n'
@@ -9,18 +12,18 @@ import EventEmitter from 'events'
 import FormatterBuilder from '../formatter/builder'
 import fs from 'mz/fs'
 import path from 'path'
-import{ PickleFilter} from 'cucumber'
+
 import VeggieFilter from '../veggie_filter'
 import Promise from 'bluebird'
 import Director from '../runtime/cprocess/director'
-import {getPathWithPrefix} from '../formatter/helpers/outputpath_helpers'
+import { getPathWithPrefix } from '../formatter/helpers/outputpath_helpers'
 
 export default class Cli {
   constructor({ argv, cwd, stdout }) {
     this.argv = argv
     this.cwd = cwd
     this.stdout = stdout
-    this.formatters= []
+    this.formatters = []
     this.streamsToClose = []
   }
 
@@ -29,13 +32,14 @@ export default class Cli {
     return ConfigurationBuilder.build({ argv: fullArgv, cwd: this.cwd })
   }
 
-  async updateFormatters({
-    count
-  }) {
-    await Promise.map(this.formatters, async ({formatter, outputTo}) => {
-      if(typeof formatter.isStdio === "function" && !formatter.isStdio()) {
-        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({outputTo,count})), 'w')
-        fs.createWriteStream
+  async updateFormatters({ count }) {
+    await Promise.map(this.formatters, async ({ formatter, outputTo }) => {
+      if (typeof formatter.isStdio === 'function' && !formatter.isStdio()) {
+        const fd = await fs.open(
+          path.resolve(this.cwd, getPathWithPrefix({ outputTo, count })),
+          'w'
+        )
+        // fs.createWriteStream
         const stream = fs.createWriteStream(null, { fd })
         formatter.updateLog(stream)
         this.streamsToClose.push(stream)
@@ -47,37 +51,49 @@ export default class Cli {
     eventBroadcaster,
     formatOptions,
     formats,
-    strict
+    strict,
   }) {
-    const eventDataCollector = new formatterHelpers.EventDataCollector(eventBroadcaster)
-    this.formatters=(await Promise.map(formats, async ({ type, outputTo, options}) => {
-      let stream = this.stdout
-      if (outputTo) {
-        const fd = await fs.open(path.resolve(this.cwd, getPathWithPrefix({outputTo,count:0})), 'w')
-        stream = fs.createWriteStream(null, { fd })
-        this.streamsToClose.push(stream)
+    const eventDataCollector = new formatterHelpers.EventDataCollector(
+      eventBroadcaster
+    )
+    this.formatters = await Promise.map(
+      formats,
+      async ({ type, outputTo, options }) => {
+        let stream = this.stdout
+        if (outputTo) {
+          const fd = await fs.open(
+            path.resolve(this.cwd, getPathWithPrefix({ outputTo, count: 0 })),
+            'w'
+          )
+          stream = fs.createWriteStream(null, { fd })
+          this.streamsToClose.push(stream)
+        }
+        const typeOptions = {
+          eventBroadcaster,
+          eventDataCollector,
+          log: ::stream.write,
+          stream,
+          strict,
+          ...formatOptions,
+          options,
+        }
+        if (!formatOptions.hasOwnProperty('colorsEnabled')) {
+          typeOptions.colorsEnabled = !!stream.isTTY
+        }
+        return {
+          formatter: FormatterBuilder.build(type, typeOptions),
+          outputTo: outputTo,
+        }
       }
-      const typeOptions = {
-        eventBroadcaster,
-        eventDataCollector,
-        log: ::stream.write,
-        stream,
-        strict,
-        ...formatOptions,
-        options
-      }
-      if (!formatOptions.hasOwnProperty('colorsEnabled')) {
-        typeOptions.colorsEnabled = !!stream.isTTY
-      }
-      return {formatter:FormatterBuilder.build(type, typeOptions), outputTo: outputTo}
-    }))
+    )
   }
 
   async cleanup() {
-    Promise.each(this.streamsToClose, stream =>
-       Promise.promisify(::stream.end)()
+    let p = Promise.each(this.streamsToClose, stream =>
+      Promise.promisify(::stream.end)()
     )
-    this.streamsToClose= []
+    this.streamsToClose = []
+    return p
   }
 
   async run() {
@@ -96,15 +112,15 @@ export default class Cli {
       eventBroadcaster,
       formatOptions: configuration.perfFormatOptions,
       formats: configuration.perfFormats,
-      strict: configuration.perfRuntimeOptions.strict
-    }) 
+      strict: configuration.perfRuntimeOptions.strict,
+    })
     const testCases = await getTestCasesFromFilesystem({
       cwd: this.cwd,
       eventBroadcaster,
       featureDefaultLanguage: configuration.featureDefaultLanguage,
       featurePaths: configuration.featurePaths,
       order: configuration.order,
-      pickleFilter: new PickleFilter(configuration.pickleFilterOptions)
+      pickleFilter: new PickleFilter(configuration.pickleFilterOptions),
     })
     const simulations = await getSimulationsFromFilesystem({
       cwd: this.cwd,
@@ -112,25 +128,26 @@ export default class Cli {
       planDefaultLanguage: configuration.planDefaultLanguage,
       planPaths: configuration.planPaths,
       order: configuration.order,
-      veggieFilter: new VeggieFilter(configuration.veggieFilterOptions)
+      veggieFilter: new VeggieFilter(configuration.veggieFilterOptions),
     })
     let results = []
-      let count = 1
+    eventBroadcaster.emit('plan-run-started')
 
-      for (let simulation of simulations) { 
-        if (count>1)
-        {
-          await this.updateFormatters({count})
+    if (testCases.length > 0) {
+      let count = 1
+      for (let simulation of simulations) {
+        if (count > 1) {
+          await this.updateFormatters({ count })
         }
-          let director = new Director({
+        let director = new Director({
           eventBroadcaster,
           options: configuration.runtimeOptions,
           supportCodePaths: configuration.supportCodePaths,
           supportCodeRequiredModules: configuration.supportCodeRequiredModules,
-          testCases: testCases
+          testCases: testCases,
         })
         await new Promise(resolve => {
-            director.run(simulation, r => {
+          director.run(simulation, r => {
             results.push(r)
             resolve()
           })
@@ -138,7 +155,13 @@ export default class Cli {
         count++
         await this.cleanup()
       }
-
+    } else {
+      this.stdout.write(
+        'No features found. Please specify feature location: <GLOB|DIR|FILE> or --require <GLOB|DIR|FILE>'
+      )
+    }
+    eventBroadcaster.emit('plan-run-finished')
+    await this.cleanup()
     return {
       shouldExitImmediately: configuration.shouldExitImmediately,
       results,

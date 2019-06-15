@@ -30,7 +30,6 @@ export default class ConfigurationBuilder {
     let planPaths = []
     let supportCodePaths = []
     if (!listI18nKeywordsFor && !listI18nLanguages) {
-      
       featurePaths = await this.expandFeaturePaths(unexpandedFeaturePaths)
       planPaths = await this.expandPlanPaths(unexpandedPlanPaths)
       let unexpandedSupportCodePaths = this.options.require
@@ -155,11 +154,10 @@ export default class ConfigurationBuilder {
   }
 
   getPerfFormats() {
-    const list = [{type:'statistics',outputTo:'',options:[]}]
+    const list = [{ type: 'statistics', outputTo: '', options: [] }]
     this.options.perfFormat.forEach(format => {
       const v = OptionSplitter.split(format)
-      if (_.findIndex(list,v)===-1)
-      {
+      if (_.findIndex(list, v) === -1) {
         list.push(v)
       }
     })

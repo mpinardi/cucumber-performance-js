@@ -1,29 +1,25 @@
-var countSymbols = require('../count_symbols');
+var countSymbols = require('../count_symbols')
 
 function Compiler() {
-  this.compile = function (salad_document) {
-    var veggies = [];
+  this.compile = function(saladDocument) {
+    var veggies = []
+    if (saladDocument.plan == null) return veggies
+    var plan = saladDocument.plan
+    var language = plan.language
+    var planTags = plan.tags
 
-    if (salad_document.plan == null) return veggies;
+    plan.children.forEach(function(simulationDefinition) {
+      compileSimulation(planTags, simulationDefinition, language, veggies)
+    })
+    return veggies
+  }
 
-    var plan = salad_document.plan;
-    var language = plan.language;
-    var planTags = plan.tags;
-
-    plan.children.forEach(function (simulationDefinition) {
-        compileSimulation(planTags, simulationDefinition, language, veggies);
-    });
-    return veggies;
-  };
-
-  function compileSimulation(planTags,simulation, language,veggies) {
+  function compileSimulation(planTags, simulation, language, veggies) {
     var groups = []
-
-    var tags = [].concat(planTags).concat(simulation.tags);
-   
-    simulation.groups.forEach(function (group) {
-      groups.push(veggieGroup(group));
-    });
+    var tags = [].concat(planTags).concat(simulation.tags)
+    simulation.groups.forEach(function(group) {
+      groups.push(veggieGroup(group))
+    })
 
     var veggie = {
       tags: veggieTags(tags),
@@ -36,124 +32,141 @@ function Compiler() {
       randomWait: simulation.randomWait,
       synchronize: simulation.synchronize,
       time: simulation.time,
-    };
-   
-    veggies.push(veggie);
+    }
+    veggies.push(veggie)
   }
 
   function createVeggieArguments(argument, variableCells, valueCells) {
-    var result = [];
-    if (!argument) return result;
+    var result = []
+    if (!argument) return result
     if (argument.type === 'DataTable') {
       var table = {
-        rows: argument.rows.map(function (row) {
+        rows: argument.rows.map(function(row) {
           return {
-            cells: row.cells.map(function (cell) {
+            cells: row.cells.map(function(cell) {
               return {
                 location: veggieLocation(cell.location),
-                value: interpolate(cell.value, variableCells, valueCells)
-              };
-            })
-          };
-        })
-      };
-      result.push(table);
+                value: interpolate(cell.value, variableCells, valueCells),
+              }
+            }),
+          }
+        }),
+      }
+      result.push(table)
     } else if (argument.type === 'DocString') {
       var docString = {
         location: veggieLocation(argument.location),
         content: interpolate(argument.content, variableCells, valueCells),
-      };
-      if(argument.contentType) {
-        docString.contentType = interpolate(argument.contentType, variableCells, valueCells);
       }
-      result.push(docString);
-   } else if (argument.type === 'Time') {
+      if (argument.contentType) {
+        docString.contentType = interpolate(
+          argument.contentType,
+          variableCells,
+          valueCells
+        )
+      }
+      result.push(docString)
+    } else if (argument.type === 'Time') {
       var time = {
         location: veggieLocation(argument.location),
         content: interpolate(argument.content, variableCells, valueCells),
-      };
-      if(argument.contentType) {
-        time.contentType = interpolate(argument.contentType, variableCells, valueCells);
       }
-      result.push(time);
+      if (argument.contentType) {
+        time.contentType = interpolate(
+          argument.contentType,
+          variableCells,
+          valueCells
+        )
+      }
+      result.push(time)
     } else if (argument.type === 'Count') {
       var count = {
         location: veggieLocation(argument.location),
         content: interpolate(argument.content, variableCells, valueCells),
-      };
-      if(argument.contentType) {
-        count.contentType = interpolate(argument.contentType, variableCells, valueCells);
       }
-      result.push(count);
+      if (argument.contentType) {
+        count.contentType = interpolate(
+          argument.contentType,
+          variableCells,
+          valueCells
+        )
+      }
+      result.push(count)
     } else if (argument.type === 'Runners') {
       var runners = {
         location: veggieLocation(argument.location),
         content: interpolate(argument.content, variableCells, valueCells),
-      };
-      if(argument.contentType) {
-        runners.contentType = interpolate(argument.contentType, variableCells, valueCells);
       }
-      result.push(runners);
+      if (argument.contentType) {
+        runners.contentType = interpolate(
+          argument.contentType,
+          variableCells,
+          valueCells
+        )
+      }
+      result.push(runners)
     } else {
-      throw Error('Internal error');
+      throw Error('Internal error')
     }
-    return result;
+    return result
   }
 
   function interpolate(name, variableCells, valueCells) {
-    variableCells.forEach(function (variableCell, n) {
-      var valueCell = valueCells[n];
-      var search = new RegExp('<' + variableCell.value + '>', 'g');
+    variableCells.forEach(function(variableCell, n) {
+      var valueCell = valueCells[n]
+      var search = new RegExp('<' + variableCell.value + '>', 'g')
       // JS Specific - dollar sign needs to be escaped with another dollar sign
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#Specifying_a_string_as_a_parameter
       var replacement = valueCell.value.replace(new RegExp('\\$', 'g'), '$$$$')
-      name = name.replace(search, replacement);
-    });
-    return name;
+      name = name.replace(search, replacement)
+    })
+    return name
   }
 
-  function veggieGroups(simulationDefinition) {
-    return simulationDefinition.groups.map(function (group) {
-      return veggieGroup(group);
-    });
-  }
+  // function veggieGroups(simulationDefinition) {
+  // return simulationDefinition.groups.map(function(group) {
+  //   return veggieGroup(group)
+  // })
+  // }
 
   function veggieGroup(group) {
     return {
       text: group.text,
       arguments: createVeggieArguments(group.argument, [], []),
-      runners:(group.runners!= undefined)?group.runners.text:'0',
-      count: (group.count!= undefined)?group.count.text:'0',
-      locations: [veggieGroupLocation(group)]
+      runners: group.runners !== undefined ? group.runners.text : '0',
+      count: group.count !== undefined ? group.count.text : '0',
+      locations: [veggieGroupLocation(group)],
     }
   }
 
   function veggieGroupLocation(group) {
     return {
       line: group.location.line,
-      column: group.location.column + (group.keyword ? countSymbols(group.keyword) : 0)
-    };
+      column:
+        group.location.column +
+        (group.keyword ? countSymbols(group.keyword) : 0),
+    }
   }
 
   function veggieLocation(location) {
     return {
       line: location.line,
-      column: location.column
+      column: location.column,
     }
   }
 
   function veggieTags(tags) {
-    return tags.map(function (tag) {
-      return veggieTag(tag);
-    });
+    return tags.map(function(tag) {
+      return veggieTag(tag)
+    })
   }
 
   function veggieTag(tag) {
     return {
       name: tag.name,
-      location: veggieLocation(tag.location)
-    };
+      location: veggieLocation(tag.location),
+    }
   }
 }
 
-module.exports = Compiler;
+module.exports = Compiler

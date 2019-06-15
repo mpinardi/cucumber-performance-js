@@ -1,4 +1,3 @@
-
 import getColorFns from './get_color_fns'
 import ProgressFormatter from './progress_formatter'
 import path from 'path'

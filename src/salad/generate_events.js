@@ -6,14 +6,17 @@ var parser = new Parser()
 parser.stopAtFirstError = false
 
 function generateEvents(data, uri, types, language) {
-  types = Object.assign({
-    'source': true,
-    'salad-document': true,
-    'veggie': true
-  }, types || {})
+  types = Object.assign(
+    {
+      source: true,
+      'salad-document': true,
+      veggie: true,
+    },
+    types || {}
+  )
 
   let result = []
-  
+
   try {
     if (types['source']) {
       result.push({
@@ -22,13 +25,12 @@ function generateEvents(data, uri, types, language) {
         data: data,
         media: {
           encoding: 'utf-8',
-          type: 'text/x.cucumber-perf.salad+plain'
-        }
+          type: 'text/x.cucumber-perf.salad+plain',
+        },
       })
     }
 
-    if (!types['salad-document'] && !types['veggie'])
-      return result
+    if (!types['salad-document'] && !types['veggie']) return result
 
     var saladDocument = parser.parse(data, language)
 
@@ -36,7 +38,7 @@ function generateEvents(data, uri, types, language) {
       result.push({
         type: 'salad-document',
         uri: uri,
-        document: saladDocument
+        document: saladDocument,
       })
     }
     if (types['veggie']) {
@@ -45,27 +47,27 @@ function generateEvents(data, uri, types, language) {
         result.push({
           type: 'veggie',
           uri: uri,
-          veggie: veggies[p]
+          veggie: veggies[p],
         })
       }
     }
-   } catch (err) {
+  } catch (err) {
     var errors = err.errors || [err]
     for (var e in errors) {
       result.push({
-        type: "attachment",
+        type: 'attachment',
         source: {
           uri: uri,
           start: {
             line: errors[e].location.line,
-            column: errors[e].location.column
-          }
+            column: errors[e].location.column,
+          },
         },
         data: errors[e].message,
         media: {
-          encoding: "utf-8",
-          type: "text/x.cucumber.stacktrace+plain"
-        }
+          encoding: 'utf-8',
+          type: 'text/x.cucumber.stacktrace+plain',
+        },
       })
     }
   }

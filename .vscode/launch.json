@@ -38,10 +38,9 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "CLI",
+            "name": "CLI_ReadLog",
             "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
-            "args": [
-                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simPos", "-f", "progress",  "-f","chartpoints:C:\\test\\chartp.txt:6","-f", "logger:C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2", "${workspaceRoot}\\test\\features\\"
+            "args": [ "-f","chartpoints:C:\\test\\chartp.csv","-f", "logger::C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2"
             ],
             "cwd": "${workspaceRoot}",
             "console": "internalConsole",
@@ -53,15 +52,27 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "CLI",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "args": [
+                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simPos", "-f", "progress",  "-f","chartpoints:C:\\test\\chartp.csv","-f", "logger:C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2", "${workspaceRoot}\\test\\features\\"
+            ],
+            "cwd": "${workspaceRoot}",
+            "console": "internalConsole",
+            "outFiles": [
+                "${workspaceRoot}/lib/cli/**.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "CLI_Profile",
             "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
             "args": [
-                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simperiodtest", "--perf-profile","default", "${workspaceRoot}\\test\\features\\"
+                "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simperiodtest", "--perf-profile","test", "${workspaceRoot}\\test\\features\\"
             ],
             "cwd": "${workspaceRoot}",
             "console": "internalConsole",  
         }
-
-
     ]
 }

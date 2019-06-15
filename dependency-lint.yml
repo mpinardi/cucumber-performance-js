@@ -1,0 +1,62 @@
+# See https://github.com/charlierudolph/dependency-lint/blob/v4.2.0/docs/configuration.md
+# for a detailed explanation of the options
+
+executedModules:
+  npmScripts:
+    dev:
+      - build
+      - coverage
+      - lint
+      - publish
+      - test
+      - version
+  shellScripts:
+    dev:
+      - test
+    ignore: []
+    root: 'scripts/*.sh'
+
+ignoreErrors:
+  missing: []
+  shouldBeDependency: []
+  shouldBeDevDependency: []
+  unused:
+    - '@babel/core'
+    - '@babel/polyfill'
+    - '@babel/plugin-proposal-function-bind' # .babelrc
+    - '@babel/preset-env' # .babelrc
+    - '@babel/register' # test/mocha.opts
+    - babel-eslint # .eslintrc.yml - plugins
+    - babel-plugin-istanbul # .babelrc
+    - babelify # package.json - scripts - build-browser-example / build-release
+    - coffee-script # features/compiler.feature
+    - coveralls # .travis.yml
+    - eslint-config-prettier # .eslintrc.yml - extends
+    - eslint-config-standard # .eslintrc.yml - extends
+    - eslint-plugin-babel # .eslintrc.yml - parser
+    - eslint-plugin-import # peer dependency of eslint-config-standard
+    - eslint-plugin-node # peer dependency of eslint-config-standard
+    - eslint-plugin-prettier # .eslintrc.yml - plugins
+    - eslint-plugin-promise # peer dependency of eslint-config-standard
+    - eslint-plugin-standard # peer dependency of eslint-config-standard
+    - prettier # peer dependency of eslint-plugin-prettier
+
+requiredModules:
+  files:
+    dev:
+      - '{features,scripts,test}/**/*'
+      - '**/*_spec.js'
+      - 'example/index.js'
+      - '**/test_helpers.js'
+    ignore:
+      - 'dist/**/*'
+      - 'lib/**/*'
+      - 'node_modules/**/*'
+      - 'tmp/**/*'
+    root: '**/*.js'
+  stripLoaders: false
+  transpilers:
+    - extension: .js
+      fnName: transform
+      module: '@babel/core' # 7.2.3
+      resultKey: code

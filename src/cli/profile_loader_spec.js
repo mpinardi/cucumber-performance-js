@@ -75,7 +75,10 @@ describe('ProfileLoader', () => {
             '  profile1: "--opt1 --opt2",\n' +
             '  profile2: "--opt3 \'some value\'"\n' +
             '}'
-          await fs.writeFile(path.join(this.tmpDir, 'cucumber-perf.js'), fileContent)
+          await fs.writeFile(
+            path.join(this.tmpDir, 'cucumber-perf.js'),
+            fileContent
+          )
         })
 
         describe('profile is defined', () => {

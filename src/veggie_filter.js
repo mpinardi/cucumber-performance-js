@@ -7,9 +7,7 @@ const tagExpressionParser = new TagExpressionParser()
 
 export default class VeggieFilter {
   constructor({ planPaths, names, tagExpression }) {
-    this.planUriToLinesMapping = this.getPlanUriToLinesMapping(
-      planPaths || []
-    )
+    this.planUriToLinesMapping = this.getPlanUriToLinesMapping(planPaths || [])
     this.names = names || []
     if (tagExpression) {
       this.tagExpressionNode = tagExpressionParser.parse(tagExpression || '')

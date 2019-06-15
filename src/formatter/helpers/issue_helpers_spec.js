@@ -1,7 +1,7 @@
 import { beforeEach, describe, it } from 'mocha'
 import { expect } from 'chai'
 import getColorFns from '../get_color_fns'
-import {Status} from 'cucumber'
+import { Status } from 'cucumber'
 import { formatIssue } from './issue_helpers'
 import figures from 'figures'
 import Gherkin from 'gherkin'
@@ -16,7 +16,7 @@ describe('IssueHelpers', () => {
         '    Then step3\n'
     )
     const pickle = new Gherkin.Compiler().compile(gherkinDocument)[0]
-    
+
     this.testCase = {
       sourceLocation: {
         uri: 'a.feature',
@@ -36,7 +36,7 @@ describe('IssueHelpers', () => {
         },
       ],
     }
-   
+
     this.options = {
       colorFns: getColorFns(false),
       gherkinDocument,
@@ -54,9 +54,11 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{exception: 'error',status: Status.FAILED, cnt: 1}],
+          issues: [{ exception: 'error', status: Status.FAILED, cnt: 1 }],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -65,7 +67,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ${figures.cross} When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          error\n' +
             '   - Then step3 # steps.js:4\n'
         )
@@ -77,9 +79,14 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{exception: 'error',status: Status.FAILED, cnt: 1},{exception: 'error2',status: Status.FAILED, cnt: 1}],
+          issues: [
+            { exception: 'error', status: Status.FAILED, cnt: 1 },
+            { exception: 'error2', status: Status.FAILED, cnt: 1 },
+          ],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -88,10 +95,10 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ${figures.cross} When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          error\n' +
-            '       2) Count: 1\n'+
-            '          error2\n'+
+            '       2) Count: 1\n' +
+            '          error2\n' +
             '   - Then step3 # steps.js:4\n'
         )
       })
@@ -102,11 +109,20 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{exception: 'Multiple step definitions match:\n' +
-              '  pattern1        - steps.js:5\n' +
-              '  longer pattern2 - steps.js:6',status: Status.AMBIGUOUS, cnt: 1}],
+          issues: [
+            {
+              exception:
+                'Multiple step definitions match:\n' +
+                '  pattern1        - steps.js:5\n' +
+                '  longer pattern2 - steps.js:6',
+              status: Status.AMBIGUOUS,
+              cnt: 1,
+            },
+          ],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -115,7 +131,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ${figures.cross} When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          Multiple step definitions match:\n' +
             '            pattern1        - steps.js:5\n' +
             '            longer pattern2 - steps.js:6\n' +
@@ -128,9 +144,11 @@ describe('IssueHelpers', () => {
       beforeEach(function() {
         this.testCase.steps[1] = {
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{status: Status.UNDEFINED,cnt: 1}]
+          issues: [{ status: Status.UNDEFINED, cnt: 1 }],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -139,7 +157,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ? When step2\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          Undefined. Implement this step.\n' +
             '   - Then step3 # steps.js:4\n'
         )
@@ -151,9 +169,11 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{status: Status.PENDING,cnt: 1}]
+          issues: [{ status: Status.PENDING, cnt: 1 }],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -162,7 +182,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ? When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          Pending\n' +
             '   - Then step3 # steps.js:4\n'
         )
@@ -187,9 +207,11 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{status: Status.PENDING,cnt: 1}]
+          issues: [{ status: Status.PENDING, cnt: 1 }],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -198,7 +220,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ? When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          Pending\n' +
             '   - Then step3 # steps.js:4\n' +
             '       | aaa | b | c   |\n' +
@@ -229,9 +251,11 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{status: Status.PENDING,cnt: 1}]
+          issues: [{ status: Status.PENDING, cnt: 1 }],
         }
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -240,7 +264,7 @@ describe('IssueHelpers', () => {
           '1) Scenario: my scenario # a.feature:2\n' +
             `   ${figures.tick} Given step1 # steps.js:2\n` +
             `   ? When step2 # steps.js:3\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          Pending\n' +
             '   - Then step3 # steps.js:4\n' +
             '       """\n' +
@@ -278,7 +302,7 @@ describe('IssueHelpers', () => {
         this.testCase.steps[1] = {
           actionLocation: { line: 3, uri: 'steps.js' },
           sourceLocation: { line: 4, uri: 'a.feature' },
-          issues: [{exception:'error',status: Status.FAILED, cnt: 1}],
+          issues: [{ exception: 'error', status: Status.FAILED, cnt: 1 }],
         }
         this.testCase.steps[1].attachments = [
           {
@@ -288,7 +312,9 @@ describe('IssueHelpers', () => {
             },
           },
         ]
-        this.testCase.steps[2].issues= [{status:this.skippedStepResult, cnt: 1}]
+        this.testCase.steps[2].issues = [
+          { status: this.skippedStepResult, cnt: 1 },
+        ]
         this.formattedIssue = formatIssue(this.options)
       })
 
@@ -301,7 +327,7 @@ describe('IssueHelpers', () => {
             `       Attachment (image/png)\n` +
             `   ${figures.cross} When step2 # steps.js:3\n` +
             `       Attachment (text/plain): Other info.\n` +
-            '       1) Count: 1\n'+
+            '       1) Count: 1\n' +
             '          error\n' +
             '   - Then step3 # steps.js:4\n'
         )

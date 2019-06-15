@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import colors from 'colors/safe'
-import {Status} from 'cucumber'
+import { Status } from 'cucumber'
 
 colors.enabled = true
 

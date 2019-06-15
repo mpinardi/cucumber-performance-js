@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 import serializeError from 'serialize-error'
 import StackTraceFilter from '../stack_trace_filter'
 import moment from 'moment'
-import { Runtime,supportCodeLibraryBuilder} from 'cucumber'
+import { Runtime, supportCodeLibraryBuilder } from 'cucumber'
 
 const EVENTS = [
   'test-run-started',
@@ -17,25 +17,28 @@ const EVENTS = [
   'test-run-finished',
 ]
 
-function replacerSerializeErrors(key, value) {
-  if (_.isError(value)) {
-    return serializeError(value)
-  }
-  return value
-}
-
-function formatLocation(obj) {
-  return `${obj.uri}:${obj.line}`
-}
-
 function serializeResultExceptionIfNecessary(data) {
-    if (
-      data.result &&
-      data.result.exception &&
-      _.isError(data.result.exception)
-    ) {
-      data.result.exception = serializeError(data.result.exception)
-    }
+  if (
+    data.result &&
+    data.result.exception &&
+    _.isError(data.result.exception)
+  ) {
+    data.result.exception = serializeError(data.result.exception)
+  }
+}
+
+function getRandomInt(mean) {
+  let min = Math.ceil(mean / 2)
+  let max = Math.floor(mean + mean / 2)
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function randomWait(mean) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, getRandomInt(mean))
+  })
 }
 
 export default class Runner {
@@ -46,23 +49,19 @@ export default class Runner {
     this.sendMessage = sendMessage
     this.eventBroadcaster = new EventEmitter()
     this.stackTraceFilter = new StackTraceFilter()
-    this.options
     this.result = null
     this.testCases = null
-    this.curTestCase = 0
-    this.curStep = 0
-    this.locations= []
+    this.randomWait = 0
+    this.locations = []
     EVENTS.forEach(name => {
       this.eventBroadcaster.on(name, data => {
-        if (data != undefined)
-        {
-          this.processMessage(name,data)
-        }
-        else {
+        if (data !== undefined) {
+          this.processMessage(name, data)
+        } else {
           if (name === 'test-run-started') {
             this.result.start = moment.utc().format()
           }
-          this.sendMessage({ command: commandTypes.EVENT, name})
+          this.sendMessage({ command: commandTypes.EVENT, name })
         }
       })
     })
@@ -72,6 +71,7 @@ export default class Runner {
     options,
     supportCodeRequiredModules,
     supportCodePaths,
+    randomWait,
   }) {
     supportCodeRequiredModules.map(module => require(module))
     supportCodeLibraryBuilder.reset(this.cwd)
@@ -80,13 +80,14 @@ export default class Runner {
     this.worldParameters = options.worldParameters
     this.filterStacktraces = options.filterStacktraces
     this.options = options
+    this.randomWait = randomWait
     if (this.filterStacktraces) {
       this.stackTraceFilter.filter()
     }
-   this.sendMessage({ command: commandTypes.READY })
+    this.sendMessage({ command: commandTypes.READY })
   }
 
-   finalize() {
+  finalize() {
     if (this.filterStacktraces) {
       this.stackTraceFilter.unfilter()
     }
@@ -103,27 +104,27 @@ export default class Runner {
     }
   }
 
-  processMessage(name,data) {
+  processMessage(name, data) {
     serializeResultExceptionIfNecessary(data)
     if (name === 'test-case-prepared') {
-      this.result.testCases.push(
-      {
+      this.result.testCases.push({
         steps: [],
         start: moment.utc().format(),
         stop: null,
         duration: 0,
-        name: this.testCases[this.curTestCase].pickle.name,
+        name: this.testCases[this.result.testCases.length].pickle.name,
         status: null,
-        sourceLocation: null
+        sourceLocation: null,
       })
-      for (let step of data.steps){
-        this.locations.push(step)
+      if (this.locations.length < this.result.testCases.length) {
+        let tcl = []
+        for (let step of data.steps) {
+          tcl.push(step)
+        }
+        this.locations.push(tcl)
       }
-    } 
-    else if (name === 'test-case-finished') {
-      this.curTestCase++
-      this.curStep=0
-      let i = this.result.testCases.length-1
+    } else if (name === 'test-case-finished') {
+      let i = this.result.testCases.length - 1
       this.result.testCases[i].stop = moment.utc().format()
       this.result.testCases[i].duration = data.result.duration
       this.result.testCases[i].status = data.result.status
@@ -131,65 +132,59 @@ export default class Runner {
       if (data.result.exception) {
         this.result.testCases[i].exception = data.result.exception
       }
-    }
-    else if (name === 'test-step-started') {
-      let i = this.result.testCases.length-1
+    } else if (name === 'test-step-started') {
+      let i = this.result.testCases.length - 1
       let n = this.result.testCases[i].steps.length
-      this.result.testCases[i].steps.push(
-        { 
+      this.result.testCases[i].steps.push({
         start: moment.utc().format(),
         stop: null,
         duration: 0,
         status: null,
-        text: this.testCases[this.curTestCase].pickle.steps[this.curStep].text,
-        sourceLocation: this.locations[n].sourceLocation,
-        actionLocation: this.locations[n].actionLocation
-        //{line: _.last(this.testCases[this.curTestCase].pickle.steps[this.curStep].locations).line,uri:null}
-        })
-    }
-    else if (name === 'test-step-finished') {
+        text: this.testCases[i].pickle.steps[n].text,
+        sourceLocation: this.locations[i][n].sourceLocation,
+        actionLocation: this.locations[i][n].actionLocation,
+        // {line: _.last(this.testCases[this.curTestCase].pickle.steps[this.curStep].locations).line,uri:null}
+      })
+    } else if (name === 'test-step-finished') {
       this.curStep++
-      let i = this.result.testCases.length-1
-      let n = this.result.testCases[i].steps.length-1
+      let i = this.result.testCases.length - 1
+      let n = this.result.testCases[i].steps.length - 1
       this.result.testCases[i].steps[n].stop = moment.utc().format()
       this.result.testCases[i].steps[n].duration = data.result.duration
       this.result.testCases[i].steps[n].status = data.result.status
-      this.result.testCases[i].steps[n].sourceLocation.uri = data.testCase.sourceLocation.uri
       if (data.result.exception) {
-       this.result.testCases[i].steps[n].exception = data.result.exception
+        this.result.testCases[i].steps[n].exception = data.result.exception
       }
-    }
-    else if (name === 'test-run-finished') {
-      this.curTestCase=0
-      this.curStep=0
+    } else if (name === 'test-run-finished') {
+      this.curTestCase = 0
+      this.curStep = 0
       this.result.stop = moment.utc().format()
-      this.result.duration = data.result.duration //this.result.stop - this.result.start
+      this.result.duration = data.result.duration // this.result.stop - this.result.start
       this.result.success = data.result.success
       data = this.result
-      this.sendMessage({ command: commandTypes.EVENT, name, data})
-    }
-    else {
-    this.sendMessage({ command: commandTypes.EVENT, name, data })
+      this.sendMessage({ command: commandTypes.EVENT, name, data })
+    } else {
+      this.sendMessage({ command: commandTypes.EVENT, name, data })
     }
   }
 
-  async runTestCases({ testCases}) {
-    this.result ={
-        testCases: [],
-        start: null,
-        stop: null,
-        duration: 0,
-        success: null,
-      }
+  async runTestCases({ testCases }) {
+    this.result = {
+      testCases: [],
+      start: null,
+      stop: null,
+      duration: 0,
+      success: null,
+    }
     this.testCases = testCases
     const runtime = new Runtime({
-        eventBroadcaster: this.eventBroadcaster,
-        options: this.options,
-        supportCodeLibrary: this.supportCodeLibrary,
-        testCases,
-      })
-    var success = await runtime.start()
+      eventBroadcaster: this.eventBroadcaster,
+      options: this.options,
+      supportCodeLibrary: this.supportCodeLibrary,
+      testCases,
+    })
+    await randomWait(this.randomWait)
+    await runtime.start()
     this.sendMessage({ command: commandTypes.READY })
   }
-
 }

@@ -41,7 +41,7 @@ export default class ArgvParser {
     const program = new Command(path.basename(argv[1]))
 
     program
-      .usage('[options] [<GLOB|DIR|FILE[:LINE]>...]')
+      .usage('-p <GLOB|DIR|FILE[:LINE]> [options] [<GLOB|DIR|FILE[:LINE]>...]')
       .version(version, '-v, --version')
       .option('-b, --backtrace', 'show full backtrace for errors')
       .option('-d, --dry-run', 'invoke formatters without executing steps')
@@ -51,7 +51,10 @@ export default class ArgvParser {
       )
       .option('--fail-fast', 'abort the run on first failure')
       .option('--perf-dry-run', 'invoke formatters without executing steps')
-      .option('--no-strict-stats', 'enable including failed results in statistics')
+      .option(
+        '--no-strict-stats',
+        'enable including failed results in statistics'
+      )
       .option(
         '--plan-tags <EXPRESSION>',
         'only execute the features or scenarios with tags matching the expression (repeatable)',

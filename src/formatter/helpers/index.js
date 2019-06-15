@@ -1,4 +1,3 @@
-
 export { formatSummary } from './summary_helpers'
 export { formatIssue } from './issue_helpers'
 export { formatLocation } from './step_result_helpers'

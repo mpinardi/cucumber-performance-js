@@ -1,1 +1,1 @@
-module.exports = require('./salad-languages.json');
+module.exports = require('./salad-languages.json')

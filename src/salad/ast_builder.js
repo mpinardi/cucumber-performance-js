@@ -1,4 +1,3 @@
-
 var AstNode = require('./ast_node');
 var Errors = require('./errors');
 
@@ -99,7 +98,7 @@ module.exports = function AstBuilder () {
 
     rows.forEach(function (row) {
       if (row.cells.length != cellCount) {
-        throw GErrors.AstBuilderException.create("inconsistent cell count within the table", row.location);
+        throw Errors.AstBuilderException.create("inconsistent cell count within the table", row.location);
       }
     });
   }
@@ -315,5 +314,4 @@ module.exports = function AstBuilder () {
         return node;
     }
   }
-
 };

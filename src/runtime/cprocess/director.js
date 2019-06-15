@@ -24,13 +24,12 @@ export default class Director {
     options,
     supportCodePaths,
     supportCodeRequiredModules,
-    testCases
+    testCases,
   }) {
     this.eventBroadcaster = eventBroadcaster
     this.options = options || {}
     this.supportCodePaths = supportCodePaths
     this.supportCodeRequiredModules = supportCodeRequiredModules
-    this.simulation
     this.groups = []
     this.testCases = testCases
     this.result = {
@@ -48,40 +47,40 @@ export default class Director {
     this.ran = 0
     this.endRamp = null
     this.rampDown = null
-    this.rampUp=null
+    this.rampUp = null
     this.curPercent = 100
     this.executing = false
     this.beginEnd = null
     this.simulation = null
     this.scheduledRuntime = null
     this.ramper = null
+    this.randomWait = 0
     this.testCaseFilter = new TestCaseFilter(this.testCases)
   }
 
   parseRunnerMessage(runner, message) {
     switch (message.command) {
       case commandTypes.READY:
-          this.manageRunner(runner)
+        this.manageRunner(runner)
         break
       case commandTypes.EVENT:
         this.eventBroadcaster.emit(message.name, message.data)
         if (message.name === 'test-run-finished') {
           this.groups[runner.groupId].ran++
           this.groups[runner.groupId].running--
-          if (this.result.groups[runner.groupId].start == null)
-          {
+          if (this.result.groups[runner.groupId].start === null) {
             this.result.groups[runner.groupId].start = moment.utc().format()
           }
           this.ran += 1
           this.result.groups[runner.groupId].results.push(message.data)
           const group = this.groups[runner.groupId]
-          //...message.data
-          const eventData = { result:message.data, group}
+          // ...message.data
+          const eventData = { result: message.data, group }
           this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
           this.manageRun()
-        } else if (message.name === 'test-run-started'){     
+        } else if (message.name === 'test-run-started') {
           const group = this.groups[runner.groupId]
-          const eventData = { group}
+          const eventData = { group }
           this.eventBroadcaster.emit('cuke-run-started', { data: eventData })
         }
 
@@ -92,21 +91,20 @@ export default class Director {
   }
 
   startRunner(id) {
-    //const runnerProcess = crossSpawn(cukeCommand, [], {
-    //childProcess.fork(
-   // this.running++
-    
-    const runnerProcess = crossSpawn(this.hasManagedGroups?groupCommand:cukeCommand, [], {
-      env: _.assign({}, process.env, {
-      }),
+    // const runnerProcess = crossSpawn(cukeCommand, [], {
+    // childProcess.fork(
+    // this.running++
+
+    const runnerProcess = crossSpawn(cukeCommand, [], {
+      env: _.assign({}, process.env, {}),
 
       stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-      //execArgv: ['--inspect-brk='+(29110+id)],
+      // execArgv: ['--inspect-brk='+(29110+id)],
     })
-    
+
     const runner = { process: runnerProcess, groupId: -1, id: id }
-    this.runners[id] =  runner
-    
+    this.runners[id] = runner
+
     runner.process.on('message', message => {
       this.parseRunnerMessage(runner, message)
     })
@@ -114,167 +112,193 @@ export default class Director {
       runner.closed = true
       this.onRunnerClose()
     })
-      runner.process.send({
-        command: commandTypes.INITIALIZE,
-        options: this.options,
-        supportCodePaths: this.supportCodePaths,
-        supportCodeRequiredModules: this.supportCodeRequiredModules,
-      })
+    runner.process.send({
+      command: commandTypes.INITIALIZE,
+      options: this.options,
+      supportCodePaths: this.supportCodePaths,
+      supportCodeRequiredModules: this.supportCodeRequiredModules,
+      randomWait: this.randomWait,
+    })
   }
 
   onRunnerClose() {
     if (_.every(this.runners, 'closed')) {
       this.result.stop = moment.utc().format()
       this.result.ran = this.ran
-      this.result.duration = this.durationBetween(this.result.start,this.result.end)
-      this.eventBroadcaster.emit('simulation-run-finished', { data: this.result })
-      this.executing=false
+      this.result.duration = this.durationBetween(
+        this.result.start,
+        this.result.end
+      )
+      this.eventBroadcaster.emit('simulation-run-finished', {
+        data: this.result,
+      })
+      this.executing = false
       this.onFinish(this.result)
     }
   }
-
 
   run(simulation, done) {
     this.eventBroadcaster.emit('simulation-run-started')
     this.result.start = moment.utc().format()
     this.result.name = simulation.veggie.name
     this.simulation = simulation
-    this.scheduledRuntime = simulation.veggie.time == undefined ? null: simulation.veggie.time.text
-    this.rampUp = simulation.veggie.rampUp== undefined ? null: simulation.veggie.rampUp.text
-    this.rampDown = simulation.veggie.rampDown== undefined ? null: simulation.veggie.rampDown.text
-    for (let group of simulation.veggie.groups){
+    this.scheduledRuntime =
+      simulation.veggie.time === undefined ? null : simulation.veggie.time.text
+    this.rampUp =
+      simulation.veggie.rampUp === undefined
+        ? null
+        : simulation.veggie.rampUp.text
+    this.rampDown =
+      simulation.veggie.rampDown === undefined
+        ? null
+        : simulation.veggie.rampDown.text
+    this.randomWait =
+      simulation.veggie.randomWait === undefined
+        ? 0
+        : moment.duration(simulation.veggie.randomWait.text).asMilliseconds()
+    for (let group of simulation.veggie.groups) {
       this.maxRunners += parseInt(group.runners)
       this.maxRan += parseInt(group.count)
       let testCases = this.testCaseFilter.filter(group.text)
-      this.groups.push({count: parseInt(group.count),
-                        runners: parseInt(group.runners),
-                        maxRunners: parseInt(group.runners),
-                        ran: 0,
-                        running: 0,
-                        text: group.text,
-                        processId: -1,
-                        arguments: group.arguments,
-                        testCases: testCases
+      this.groups.push({
+        count: parseInt(group.count),
+        runners: parseInt(group.runners),
+        maxRunners: parseInt(group.runners),
+        ran: 0,
+        running: 0,
+        text: group.text,
+        processId: -1,
+        arguments: group.arguments,
+        testCases: testCases,
       })
       this.result.groups.push({
         start: null,
         stop: null,
         duration: 0,
         results: [],
-        text: group.text
+        text: group.text,
       })
     }
-    this.executing=true;
+    this.executing = true
     let curTime = new Date()
     if (this.scheduledRuntime != null) {
-      this.beginEnd = this.getEnd(curTime, this.scheduledRuntime);
+      this.beginEnd = this.getEnd(curTime, this.scheduledRuntime)
     }
     if (this.rampUp != null) {
-      this.curPercent=0
-      this.endRamp = this.getEnd(curTime, this.rampUp);
-      let rampPeriod = (this.getRampPeriod(this.durationBetween(curTime, this.endRamp), maxRampPeriods)*1000);
-      this.setCurGroupThreads(0);
-      this.ramper = setInterval(this.ramp.bind(this), rampPeriod);
+      this.curPercent = 0
+      this.endRamp = this.getEnd(curTime, this.rampUp)
+      let rampPeriod =
+        this.getRampPeriod(
+          this.durationBetween(curTime, this.endRamp),
+          maxRampPeriods
+        ) * 1000
+      this.setCurGroupThreads(0)
+      this.ramper = setInterval(this.ramp.bind(this), rampPeriod)
     }
-    
+
     this.manageRun()
     this.onFinish = done
   }
 
   manageRun() {
     let curTime = new Date()
-    
-    if (this.executing)
-    {
+
+    if (this.executing) {
       if (this.endRamp == null) {
         // check if time is up
-        if ((this.beginEnd != null && new Date()>this.beginEnd)
-        || (this.ran >= this.maxRan && this.beginEnd == null)) {
-            if (this.rampDown == null) {
-               this.executing = false;
-                return;
-            }else {
-                this.endRamp = this.getEnd(curTime, this.rampDown);
-                let rampPeriod = (this.getRampPeriod(this.durationBetween(curTime, this.endRamp), maxRampPeriods)*1000);
-                this.ramper = setInterval(this.ramp.bind(this), rampPeriod);
-            }
+        if (
+          (this.beginEnd != null && new Date() > this.beginEnd) ||
+          (this.ran >= this.maxRan && this.beginEnd == null)
+        ) {
+          if (this.rampDown == null) {
+            this.executing = false
+            return
+          } else {
+            this.endRamp = this.getEnd(curTime, this.rampDown)
+            let rampPeriod =
+              this.getRampPeriod(
+                this.durationBetween(curTime, this.endRamp),
+                maxRampPeriods
+              ) * 1000
+            this.ramper = setInterval(this.ramp.bind(this), rampPeriod)
+          }
         }
       }
-        //are all runners running
-        if (this.running < this.maxRunners && (this.scheduledRuntime != null || this.hasGroupsToRun()))
-        {
-            for (var i = this.running; i < this.maxRunners; i++) {
-              this.running++
-              this.startRunner(i)
-            }
+      // are all runners running
+      if (
+        this.running < this.maxRunners &&
+        (this.scheduledRuntime != null || this.hasGroupsToRun())
+      ) {
+        for (var i = this.running; i < this.maxRunners; i++) {
+          this.running++
+          this.startRunner(i)
         }
+      }
     }
   }
-  
-  ramp()
-  {
+
+  ramp() {
     let curTime = new Date()
     if (this.endRamp != null) {
       if (curTime > this.endRamp) {
-        this.endRamp = null;
+        this.endRamp = null
         if (this.rampUp == null) {
-          this.rampDown = null;
-          this.executing = false;
-          this.curPercent = 0;
+          this.rampDown = null
+          this.executing = false
+          this.curPercent = 0
         } else {
-          this.rampUp = null;
-          this.curPercent = 100;
+          this.rampUp = null
+          this.curPercent = 100
         }
         clearInterval(this.ramper)
-        this.setCurGroupThreads(this.curPercent);
-      } else  {
-        if (this.rampUp == null)
-        {
-          this.curPercent = this.curPercent - (100 / maxRampPeriods);
+        this.setCurGroupThreads(this.curPercent)
+      } else {
+        if (this.rampUp == null) {
+          this.curPercent = this.curPercent - 100 / maxRampPeriods
+        } else {
+          this.curPercent = this.curPercent + 100 / maxRampPeriods
         }
-        else
-        {
-          this.curPercent = this.curPercent + (100 / maxRampPeriods);
-        }
-        this.setCurGroupThreads(this.curPercent);
+        this.setCurGroupThreads(this.curPercent)
       }
       this.manageRun()
     }
   }
 
   manageRunner(runner) {
-    if  (this.running > this.maxRunners)
-    {
+    if (this.running > this.maxRunners) {
       runner.process.send({ command: commandTypes.FINALIZE })
       this.running--
       return
     }
 
-    let loc = Math.floor(Math.random() * 99999999) + 1;
-    for (let l = 0;  l < this.groups.length; l++) {
-      let testCases = []
-        let gId =  (loc + l) % this.groups.length;
-        let pg = this.groups[gId];
-        if (pg.running < pg.runners && (this.scheduledRuntime != null ||pg.ran < pg.count)) {
-          pg.running++
-          let slice = this.getSlice(pg)
-          let testCases = slice!=null?slice.parseTestCases(pg.testCases):pg.testCases
-          //const skip =
-          //this.options.dryRun || (this.options.failFast && !this.result.success)
-          runner.groupId = gId
-          runner.process.send({ command: commandTypes.RUN,testCases})
-          return
-        }
+    let loc = Math.floor(Math.random() * 99999999) + 1
+    for (let l = 0; l < this.groups.length; l++) {
+      let gId = (loc + l) % this.groups.length
+      let pg = this.groups[gId]
+      if (
+        pg.running < pg.runners &&
+        (this.scheduledRuntime != null || pg.ran < pg.count)
+      ) {
+        pg.running++
+        let slice = this.getSlice(pg)
+        let testCases =
+          slice != null ? slice.parseTestCases(pg.testCases) : pg.testCases
+        // const skip =
+        // this.options.dryRun || (this.options.failFast && !this.result.success)
+        runner.groupId = gId
+        runner.process.send({ command: commandTypes.RUN, testCases })
+        return
+      }
     }
     runner.process.send({ command: commandTypes.FINALIZE })
     this.running--
   }
 
-   getEnd(start, time) {
-     let m  =  moment(start);
-     m.add(moment.duration(time))
-     return m.toDate()
-	}
+  getEnd(start, time) {
+    let m = moment(start)
+    m.add(moment.duration(time))
+    return m.toDate()
+  }
 
   shouldCauseFailure(status) {
     return (
@@ -283,11 +307,9 @@ export default class Director {
     )
   }
 
-  hasGroupsToRun()
-  {
+  hasGroupsToRun() {
     for (let group of this.groups) {
-      if (group.ran<group.count)
-      {
+      if (group.ran < group.count) {
         return true
       }
     }
@@ -295,44 +317,42 @@ export default class Director {
   }
 
   setCurGroupThreads(percent) {
-		let per = 1;
-		if (percent < 100) {
-			if (percent > 0) {
-				per = ( percent / 100);
-			} else {
-				per = 0;
-			}
+    let per = 1
+    if (percent < 100) {
+      if (percent > 0) {
+        per = percent / 100
+      } else {
+        per = 0
+      }
     }
     let ms = 0
-		for (let group of this.groups) {
-      group.runners = Math.round(group.maxRunners * per);
+    for (let group of this.groups) {
+      group.runners = Math.round(group.maxRunners * per)
       ms = ms + group.runners
     }
     this.maxRunners = ms
-	}
-
-	getRampPeriod(time, times) {
-		return time.asSeconds()/ times;
-  }
-  
-  durationBetween(start, end)
-  {
-    var ms = moment(end).diff(moment(start));
-    return moment.duration(ms);
-    //var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
   }
 
-  getSlice(group)
-	{
+  getRampPeriod(time, times) {
+    return time.asSeconds() / times
+  }
+
+  durationBetween(start, end) {
+    var ms = moment(end).diff(moment(start))
+    return moment.duration(ms)
+    // var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+  }
+
+  getSlice(group) {
     var rows = []
-    if (group.arguments[0].rows)
-    {
-        rows.push(group.arguments[0].rows[0])
-        let sel = ((group.ran==0?group.running:group.ran) % group.arguments[0].rows.length);
-        if (sel===0) 
-          sel++;
-        rows.push(group.arguments[0].rows[sel]);
-        return new Slice(rows);
+    if (group.arguments && group.arguments.length > 0) {
+      rows.push(group.arguments[0].rows[0])
+      let sel =
+        (group.ran === 0 ? group.running : group.ran) %
+        group.arguments[0].rows.length
+      if (sel === 0) sel++
+      rows.push(group.arguments[0].rows[sel])
+      return new Slice(rows)
     }
     return null
   }

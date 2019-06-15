@@ -1,5 +1,5 @@
 import { beforeEach, describe, it } from 'mocha'
-import chai, {expect} from 'chai'
+import chai, { expect } from 'chai'
 import sinon from 'sinon'
 import sinonChai from 'sinon-chai'
 import { getSimulationsFromFilesystem } from './helpers'
@@ -10,7 +10,7 @@ import path from 'path'
 import VeggieFilter from '../veggie_filter'
 import tmp from 'tmp'
 
-chai.use(sinonChai);
+chai.use(sinonChai)
 
 describe('helpers', () => {
   describe('getSimulationsFromFilesystem', () => {
@@ -51,7 +51,10 @@ describe('helpers', () => {
         expect(this.onSource).to.have.callCount(1)
         expect(this.onSource).to.have.been.calledWith({
           data: '',
-          media: { encoding: 'utf-8', type: 'text/x.cucumber-perf.salad+plain' },
+          media: {
+            encoding: 'utf-8',
+            type: 'text/x.cucumber-perf.salad+plain',
+          },
           uri: this.relativeplanPath,
         })
       })
@@ -98,7 +101,10 @@ describe('helpers', () => {
         expect(this.onSource).to.have.callCount(1)
         expect(this.onSource).to.have.been.calledWith({
           data: 'Plan: a\nSimulation: b\nGroup test.feature',
-          media: { encoding: 'utf-8', type: 'text/x.cucumber-perf.salad+plain' },
+          media: {
+            encoding: 'utf-8',
+            type: 'text/x.cucumber-perf.salad+plain',
+          },
           uri: this.relativeplanPath,
         })
       })
@@ -139,7 +145,10 @@ describe('helpers', () => {
         expect(this.onSource).to.have.callCount(1)
         expect(this.onSource).to.have.been.calledWith({
           data: 'Plan: a\nSimulation: b\nGroup test.feature',
-          media: { encoding: 'utf-8', type: 'text/x.cucumber-perf.salad+plain' },
+          media: {
+            encoding: 'utf-8',
+            type: 'text/x.cucumber-perf.salad+plain',
+          },
           uri: this.relativeplanPath,
         })
       })

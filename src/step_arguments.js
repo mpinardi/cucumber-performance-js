@@ -1,8 +1,6 @@
 import util from 'util'
 
-
 export function buildStepArgumentIterator(mapping) {
-
   return function(arg) {
     if (arg.hasOwnProperty('rows')) {
       return mapping.dataTable(arg)
@@ -12,5 +10,4 @@ export function buildStepArgumentIterator(mapping) {
 
     throw new Error(`Unknown argument type:${util.inspect(arg)}`)
   }
-
 }

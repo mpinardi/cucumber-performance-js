@@ -12,19 +12,17 @@ export default class Formatter {
         'log',
         'stream',
         'supportCodeLibrary',
-        'options'
+        'options',
       ])
     )
   }
 
-  updateLog(stream)
-  {
+  updateLog(stream) {
     this.log = ::stream.write
     this.stream = stream
   }
 
-  isStdio()
-  {
+  isStdio() {
     return this.stream._isStdio
   }
 }

@@ -1,11 +1,10 @@
 import _ from 'lodash'
 import { getStepMessages } from './step_result_helpers'
 import indentString from 'indent-string'
-import {Status} from 'cucumber'
+import { Status, formatterHelpers } from 'cucumber'
 import figures from 'figures'
 import Table from 'cli-table3'
 import { buildStepArgumentIterator } from '../../step_arguments'
-import { formatterHelpers } from 'cucumber'
 
 const CHARACTERS = {
   [Status.AMBIGUOUS]: figures.cross,
@@ -71,11 +70,11 @@ function formatStep({
   pickleStep,
   testStep,
 }) {
-  const status = testStep.issues? testStep.issues[0].status: Status.PASSED
+  const status = testStep.issues ? testStep.issues[0].status : Status.PASSED
   const colorFn = colorFns[status]
 
   let identifier
-  if (testStep.sourceLocation) {
+  if (testStep.sourceLocation && pickleStep) {
     identifier = keyword + (pickleStep.text || '')
   } else {
     identifier = isBeforeHook ? 'Before' : 'After'
@@ -85,7 +84,9 @@ function formatStep({
 
   const { actionLocation } = testStep
   if (actionLocation) {
-    text += ` # ${colorFns.location(formatterHelpers.formatLocation(actionLocation))}`
+    text += ` # ${colorFns.location(
+      formatterHelpers.formatLocation(actionLocation)
+    )}`
   }
   text += '\n'
 
@@ -131,20 +132,29 @@ export function formatIssue({
 }) {
   const prefix = `${number}) `
   let text = prefix
-  const scenarioLocation = formatterHelpers.formatLocation(testCase.sourceLocation)
+  const scenarioLocation = formatterHelpers.formatLocation(
+    testCase.sourceLocation
+  )
   text += `Scenario: ${pickle.name} # ${colorFns.location(scenarioLocation)}\n`
-  const stepLineToKeywordMap = formatterHelpers.GherkinDocumentParser.getStepLineToKeywordMap(gherkinDocument)
-  const stepLineToPickledStepMap = formatterHelpers.PickleParser.getStepLineToPickledStepMap(pickle)
+  const stepLineToKeywordMap = formatterHelpers.GherkinDocumentParser.getStepLineToKeywordMap(
+    gherkinDocument
+  )
+  const stepLineToPickledStepMap = formatterHelpers.PickleParser.getStepLineToPickledStepMap(
+    pickle
+  )
   let isBeforeHook = true
   let previousKeywordType = formatterHelpers.KeywordType.PRECONDITION
   _.each(testCase.steps, testStep => {
     isBeforeHook = isBeforeHook && !testStep.sourceLocation
     let keyword, keywordType, pickleStep
-    //testStep.sourceLocation= {line:_.last(pickle.steps[testStep.index].locations).line,uri:testCase.sourceLocation.uri}
+    // testStep.sourceLocation= {line:_.last(pickle.steps[testStep.index].locations).line,uri:testCase.sourceLocation.uri}
     if (testStep.sourceLocation) {
       pickleStep = stepLineToPickledStepMap[testStep.sourceLocation.line]
-      if (pickleStep){
-        keyword = formatterHelpers.PickleParser.getStepKeyword({ pickleStep, stepLineToKeywordMap })
+      if (pickleStep) {
+        keyword = formatterHelpers.PickleParser.getStepKeyword({
+          pickleStep,
+          stepLineToKeywordMap,
+        })
         keywordType = formatterHelpers.getStepKeywordType({
           keyword,
           language: gherkinDocument.feature.language,
@@ -163,6 +173,6 @@ export function formatIssue({
     text += indentString(formattedStep, prefix.length)
     previousKeywordType = keywordType
   })
-  //\n
+  // \n
   return `${text}`
 }

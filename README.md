@@ -103,7 +103,7 @@ Your functional automation should follow these rules:
 Follow directions in [wiki](https://github.com/mpinardi/cucumber-performance-js/wiki) to get up and running.
 
 ### Installing
-tbd
+[npm i cucumber-perf](https://www.npmjs.com/package/cucumber-perf)
 
 ## Versioning
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 

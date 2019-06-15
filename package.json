@@ -12,6 +12,15 @@
     "performance",
     "load"
   ],
+  "homepage": "https://github.com/mpinardi/cucumber-performance-js",
+  "author": "M Pinardi <pinardi@gmail.com> ()",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mpinardi/cucumber-performance-js.git"
+  },
+  "bugs": {
+    "url": "http://github.com/mpinardi/cucumber-performance-js/issues"
+  },
   "directories": {
     "lib": "./lib"
   },

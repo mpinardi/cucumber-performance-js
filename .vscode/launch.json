@@ -17,7 +17,7 @@
             "type": "node",
             "request": "launch",
             "name": "Node1",
-            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf",
             "args": [
                 "--plantags","@simperiodtest","-f","progress","-f","summary:C:\\test\\summary.txt","-p","${workspaceRoot}\\test\\plans\\", "${workspaceRoot}\\test\\features\\"
             ],
@@ -39,7 +39,7 @@
             "type": "node",
             "request": "launch",
             "name": "CLI_ReadLog",
-            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf",
             "args": [ "-f","chartpoints:C:\\test\\chartp.csv","-f", "logger::C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2"
             ],
             "cwd": "${workspaceRoot}",
@@ -53,7 +53,7 @@
             "type": "node",
             "request": "launch",
             "name": "CLI",
-            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf",
             "args": [
                 "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simPos", "-f", "progress",  "-f","chartpoints:C:\\test\\chartp.csv","-f", "logger:C://test/log.txt","-f", "summary:C://test/summary^|#0001#01-#001(@HHmmss)_#01.text:1,2", "${workspaceRoot}\\test\\features\\"
             ],
@@ -67,7 +67,7 @@
             "type": "node",
             "request": "launch",
             "name": "CLI_Profile",
-            "program": "${workspaceRoot}\\bin\\cucumber-perf.js",
+            "program": "${workspaceRoot}\\bin\\cucumber-perf",
             "args": [
                 "-p","${workspaceRoot}\\test\\plans\\","--plan-tags","@simperiodtest", "--perf-profile","test", "${workspaceRoot}\\test\\features\\"
             ],

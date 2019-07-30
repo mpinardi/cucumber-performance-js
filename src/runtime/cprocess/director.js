@@ -76,6 +76,9 @@ export default class Director {
           const group = this.groups[runner.groupId]
           // ...message.data
           const eventData = { result: message.data, group }
+          if (this.shouldCauseFailure(message.data.status)) {
+            this.result.success = false
+          }
           this.eventBroadcaster.emit('cuke-run-finished', { data: eventData })
           this.manageRun()
         } else if (message.name === 'test-run-started') {

@@ -41,6 +41,33 @@ describe('OptionSplitter', () => {
       input: 'C:\\custom\\formatter',
       output: { type: 'C:\\custom\\formatter', outputTo: '', options: [] },
     },
+    {
+      description: 'splits absolute windows paths',
+      input: 'C:\\custom\\formatter:C:\\formatter\\output.txt:1,2',
+      output: {
+        type: 'C:\\custom\\formatter',
+        outputTo: 'C:\\formatter\\output.txt',
+        options: ['1', '2'],
+      },
+    },
+    {
+      description: 'splits relative unix paths with options',
+      input: '../custom/formatter:../formatter/output.txt:1,2',
+      output: {
+        type: '../custom/formatter',
+        outputTo: '../formatter/output.txt',
+        options: ['1', '2'],
+      },
+    },
+    {
+      description: 'splits absolute unix paths with options',
+      input: '/custom/formatter:/formatter/output.txt:1,2',
+      output: {
+        type: '/custom/formatter',
+        outputTo: '/formatter/output.txt',
+        options: ['1', '2'],
+      },
+    },
   ]
 
   examples.forEach(({ description, input, output }) => {

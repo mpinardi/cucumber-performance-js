@@ -12,9 +12,9 @@ export default class LoggerFormatter extends Formatter {
       this.log(
         'No output path was specified! Unable to log plan execution results.'
       )
-    else if (this.options.length > 0)
-      options.eventBroadcaster.on('plan-run-started', ::this.processFile)
     else options.eventBroadcaster.on('cuke-run-finished', ::this.logToFile)
+    if (this.options.length > 0)
+      options.eventBroadcaster.on('plan-run-started', ::this.processFile)
   }
 
   logToFile({ data }) {
@@ -33,13 +33,15 @@ export default class LoggerFormatter extends Formatter {
       name: null,
       success: true,
     }
-
+    this.result.duration = moment.duration(
+      moment(this.result.stop).diff(moment(this.result.start))
+    )
     for (let res of logobj) {
       let i = _.findIndex(this.result.groups, { text: res.group.text })
       if (i === -1) {
         this.result.groups.push({
           start: res.result.start,
-          stop: null,
+          stop: res.result.stop,
           duration: 0,
           results: [],
           text: res.group.text,
@@ -49,11 +51,9 @@ export default class LoggerFormatter extends Formatter {
       this.result.groups[i].results = this.result.groups[i].results.concat(
         res.result
       )
+      if (moment(this.result.groups[i].stop).isBefore(moment(res.result.stop)))
+        this.result.groups[i].stop = res.result.stop
     }
-
-    this.result.duration = moment.duration(
-      moment(this.result.stop).diff(moment(this.result.start))
-    )
     this.eventBroadcaster.emit('simulation-run-finished', { data: this.result })
   }
 }

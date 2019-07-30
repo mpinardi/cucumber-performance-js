@@ -135,25 +135,31 @@ export default class Cli {
 
     if (testCases.length > 0) {
       let count = 1
-      for (let simulation of simulations) {
-        if (count > 1) {
-          await this.updateFormatters({ count })
-        }
-        let director = new Director({
-          eventBroadcaster,
-          options: configuration.runtimeOptions,
-          supportCodePaths: configuration.supportCodePaths,
-          supportCodeRequiredModules: configuration.supportCodeRequiredModules,
-          testCases: testCases,
-        })
-        await new Promise(resolve => {
-          director.run(simulation, r => {
-            results.push(r)
-            resolve()
+      if (simulations.length > 0) {
+        for (let simulation of simulations) {
+          if (count > 1) {
+            await this.updateFormatters({ count })
+          }
+          let director = new Director({
+            eventBroadcaster,
+            options: configuration.runtimeOptions,
+            supportCodePaths: configuration.supportCodePaths,
+            supportCodeRequiredModules: configuration.supportCodeRequiredModules,
+            testCases: testCases,
           })
-        })
-        count++
-        await this.cleanup()
+          await new Promise(resolve => {
+            director.run(simulation, r => {
+              results.push(r)
+              resolve()
+            })
+          })
+          count++
+          await this.cleanup()
+        }
+      } else {
+        this.stdout.write(
+          'No plans found. Please specify plan location: -p <GLOB|DIR|FILE> or --plans <GLOB|DIR|FILE>'
+        )
       }
     } else {
       this.stdout.write(
@@ -162,9 +168,15 @@ export default class Cli {
     }
     eventBroadcaster.emit('plan-run-finished')
     await this.cleanup()
+    let success = true
+    for (let result of results) {
+      if (!result.success) {
+        success = false
+      }
+    }
     return {
       shouldExitImmediately: configuration.shouldExitImmediately,
-      results,
+      success,
     }
   }
 }

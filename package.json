@@ -1,6 +1,6 @@
 {
   "name": "cucumber-perf",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "The js implimentation of Cucumber-Perf",
   "keywords": [
     "testing",
@@ -36,7 +36,7 @@
     "lib/"
   ],
   "scripts": {
-    "feature-test": "node ./bin/cucumber-perf",
+    "feature-test": "node ./bin/cucumber-perf -p test\\plans\\ --plan-tags @simPos -f progress test\\features\\",
     "build-local-working": "babel src -d lib --ignore \"src/**/veggie_filter_spec.js\",\"src/**/test_case_filter_spec.js\",\"src/**/slice_spec.js\",\"src/**/chartpoints_formatter_spec.js\",\"src/**/logger_formatter_spec.js\",\"src/**/progress_formatter_spec.js\",\"src/**/statistics_spec.js\",\"src/**/summary_formatter_spec.js\",\"src/**/summary_helper_spec.js\",\"src/**/issue_helpers_spec.js\",\"src/**/outputpath_helpers_spec.js\",\"src/**/configuration_builder_spec.js\",\"src/**/helpers_spec.js\",\"src/**/option_splitter_spec.js\",\"src/**/profile_loader_spec.js\"",
     "build-local": "babel src -d lib --ignore \"**/*_spec.js\"",
     "build-local-test": "babel test/steps -d test/features/steps --ignore **/*_spec.js",

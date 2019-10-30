@@ -3,7 +3,7 @@ import commandTypes from '../command_types'
 import TestCaseFilter from '../test_case_filter'
 import Slice from '../slice'
 import path from 'path'
-import Status from 'cucumber'
+import { Status } from 'cucumber'
 import crossSpawn from 'cross-spawn'
 import moment from 'moment'
 

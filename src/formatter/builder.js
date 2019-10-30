@@ -3,7 +3,7 @@ import ProgressFormatter from './progress_formatter'
 import path from 'path'
 import SummaryFormatter from './summary_formatter'
 import Statistics from './statistics'
-import ChartPointsFormatter from './chartPoints_formatter'
+import ChartPointsFormatter from './chartpoints_formatter'
 import LoggerFormatter from './logger_formatter'
 
 export default class FormatterBuilder {

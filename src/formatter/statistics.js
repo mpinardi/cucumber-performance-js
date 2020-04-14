@@ -89,7 +89,8 @@ export default class Statistics {
                 start: new Date(),
                 stop: null,
                 duration: 0,
-                sourceLcation {line: 0,uri: null}
+                pickleId: 0,
+                sourceLpcation {line: 0,uri: null}
                 name: this.testCases[this.curTestCase].pickle.name,
                 status: null,
                 exception:{message:'message',status:''},

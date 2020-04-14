@@ -115,6 +115,7 @@ export default class Runner {
         name: this.testCases[this.result.testCases.length].pickle.name,
         status: null,
         sourceLocation: null,
+        id: 0,
       })
       if (this.locations.length < this.result.testCases.length) {
         let tcl = []

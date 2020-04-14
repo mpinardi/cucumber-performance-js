@@ -30,10 +30,13 @@ export default class SummaryFormatter extends Formatter {
       if (group.hasIssues) {
         group.testCases.forEach((testCase, index) => {
           if (testCase.hasIssues) {
-            const {
-              gherkinDocument,
-              pickle,
-            } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
+            // 5.*
+            // const {
+            //   gherkinDocument,
+            //   pickle,
+            // } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
+            const gherkinDocument = this.eventDataCollector.gherkinDocumentMap[group.uri]
+            const pickle = this.eventDataCollector.pickleMap[testCase.sourceLocation.uri + ':' + testCase.sourceLocation.line]
             this.log(
               formatIssue({
                 colorFns: this.colorFns,

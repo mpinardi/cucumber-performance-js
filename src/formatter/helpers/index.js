@@ -1,6 +1,7 @@
-export { formatSummary } from './summary_helpers'
+export { formatSummary, convertOutput } from './summary_helpers'
 export { formatIssue } from './issue_helpers'
 export { formatLocation } from './step_result_helpers'
 export { trimFeature } from './title_helpers'
 export { outputPath } from './outputpath_helpers'
 export { isStatusFailure, isStatusWarning } from './status_helpers'
+export { formatCSV } from './csv_helpers'

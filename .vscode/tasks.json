@@ -5,8 +5,9 @@
     "tasks": [
         {
             "type": "npm",
-            "script": "build-local",
-            "problemMatcher": []
+            "script": "build-local-working",
+            "problemMatcher": [],
+            "label": ""
         }
     ]
 }

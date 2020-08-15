@@ -164,8 +164,6 @@ export default class Runner {
       this.result.success = data.result.success
       data = this.result
       this.sendMessage({ command: commandTypes.EVENT, name, data })
-    } else {
-      this.sendMessage({ command: commandTypes.EVENT, name, data })
     }
   }
 

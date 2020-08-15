@@ -8,11 +8,6 @@ import { EventEmitter } from 'events'
 import fs from 'mz/fs'
 import path from 'path'
 
-async function wait(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
-}
 describe('loggerFormatter', () => {
   describe('using stdout', () => {
     beforeEach(function() {
@@ -61,45 +56,45 @@ describe('loggerFormatter', () => {
       beforeEach(function() {
         let data = {
           testCases: [
-              {
-                steps: [
-                  {
-                    start: '2019-06-04T14:10:24Z',
-                    stop: '2019-06-04T16:10:24Z',
-                    sourceLocation: { line: 3, uri: 'a.feature' },
-                    actionLocation: { line: 4, uri: 'steps.js' },
-                    duration: 150,
-                    status: Status.PASSED,
-                    text: 'step a',
-                  },
-                ],
-                start: '2019-06-04T14:10:24Z',
-                stop: '2019-06-04T16:10:24Z',
-                duration: 150,
-                sourceLocation: { line: 2, uri: 'a.feature' },
-                name: 'tc a',
-                status: Status.PASSED,
-              },
-              {
-                steps: [
-                  {
-                    start: '2019-06-04T14:10:24Z',
-                    stop: '2019-06-04T15:10:24Z',
-                    sourceLocation: { line: 3, uri: 'a.feature' },
-                    actionLocation: { line: 4, uri: 'steps.js' },
-                    duration: 120,
-                    status: Status.PASSED,
-                    text: 'step a',
-                  },
-                ],
-                start: '2019-06-04T14:10:24Z',
-                stop: '2019-06-04T15:10:24Z',
-                duration: 120,
-                sourceLocation: { line: 2, uri: 'a.feature' },
-                name: 'tc b',
-                status: Status.PASSED,
-              },
-            ],
+            {
+              steps: [
+                {
+                  start: '2019-06-04T14:10:24Z',
+                  stop: '2019-06-04T16:10:24Z',
+                  sourceLocation: { line: 3, uri: 'a.feature' },
+                  actionLocation: { line: 4, uri: 'steps.js' },
+                  duration: 150,
+                  status: Status.PASSED,
+                  text: 'step a',
+                },
+              ],
+              start: '2019-06-04T14:10:24Z',
+              stop: '2019-06-04T16:10:24Z',
+              duration: 150,
+              sourceLocation: { line: 2, uri: 'a.feature' },
+              name: 'tc a',
+              status: Status.PASSED,
+            },
+            {
+              steps: [
+                {
+                  start: '2019-06-04T14:10:24Z',
+                  stop: '2019-06-04T15:10:24Z',
+                  sourceLocation: { line: 3, uri: 'a.feature' },
+                  actionLocation: { line: 4, uri: 'steps.js' },
+                  duration: 120,
+                  status: Status.PASSED,
+                  text: 'step a',
+                },
+              ],
+              start: '2019-06-04T14:10:24Z',
+              stop: '2019-06-04T15:10:24Z',
+              duration: 120,
+              sourceLocation: { line: 2, uri: 'a.feature' },
+              name: 'tc b',
+              status: Status.PASSED,
+            },
+          ],
           start: '2019-06-04T14:10:24Z',
           stop: '2019-06-04T16:10:24Z',
           duration: 270,
@@ -135,45 +130,45 @@ describe('loggerFormatter', () => {
         beforeEach(function() {
           let data = {
             testCases: [
-            {
-              steps: [
               {
+                steps: [
+                  {
+                    start: '2019-06-04T14:10:24Z',
+                    stop: '2019-06-04T16:10:24Z',
+                    sourceLocation: { line: 3, uri: 'a.feature' },
+                    actionLocation: { line: 4, uri: 'steps.js' },
+                    duration: 150,
+                    status: Status.PASSED,
+                    text: 'step a',
+                  },
+                ],
                 start: '2019-06-04T14:10:24Z',
-                      stop: '2019-06-04T16:10:24Z',
-                      sourceLocation: { line: 3, uri: 'a.feature' },
-                      actionLocation: { line: 4, uri: 'steps.js' },
-                      duration: 150,
-                      status: Status.PASSED,
-                      text: 'step a',
-                    },
-                  ],
-                  start: '2019-06-04T14:10:24Z',
-                  stop: '2019-06-04T16:10:24Z',
-                  duration: 150,
-                  sourceLocation: { line: 2, uri: 'a.feature' },
-                  name: 'tc a',
-                  status: Status.PASSED,
-                },
-                {
-                  steps: [
-                    {
-                      start: '2019-06-04T14:10:24Z',
-                      stop: '2019-06-04T14:50:24Z',
-                      sourceLocation: { line: 3, uri: 'a.feature' },
-                      actionLocation: { line: 4, uri: 'steps.js' },
-                      duration: 75,
-                      status: Status.PASSED,
-                      text: 'step a',
-                    },
-                  ],
-                  start: '2019-06-04T14:10:24Z',
-                  stop: '2019-06-04T14:50:24Z',
-                  duration: 75,
-                  sourceLocation: { line: 2, uri: 'a.feature' },
-                  name: 'tc b',
-                  status: Status.PASSED,
-                },
-              ],
+                stop: '2019-06-04T16:10:24Z',
+                duration: 150,
+                sourceLocation: { line: 2, uri: 'a.feature' },
+                name: 'tc a',
+                status: Status.PASSED,
+              },
+              {
+                steps: [
+                  {
+                    start: '2019-06-04T14:10:24Z',
+                    stop: '2019-06-04T14:50:24Z',
+                    sourceLocation: { line: 3, uri: 'a.feature' },
+                    actionLocation: { line: 4, uri: 'steps.js' },
+                    duration: 75,
+                    status: Status.PASSED,
+                    text: 'step a',
+                  },
+                ],
+                start: '2019-06-04T14:10:24Z',
+                stop: '2019-06-04T14:50:24Z',
+                duration: 75,
+                sourceLocation: { line: 2, uri: 'a.feature' },
+                name: 'tc b',
+                status: Status.PASSED,
+              },
+            ],
             start: '2019-06-04T14:10:24Z',
             stop: '2019-06-04T15:10:24Z',
             duration: 200,
@@ -229,7 +224,7 @@ describe('loggerFormatter', () => {
               stream: process.stdout,
               options: ['/test/log.txt'],
             })
-            this.eventBroadcaster.emit('plan-run-started')
+            this.eventBroadcaster.emit('perf-run-started')
           })
 
           it('verify output', function() {

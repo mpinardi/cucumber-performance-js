@@ -11,6 +11,7 @@ export default class Formatter {
         'eventDataCollector',
         'log',
         'stream',
+        'strict',
         'supportCodeLibrary',
         'options',
       ])

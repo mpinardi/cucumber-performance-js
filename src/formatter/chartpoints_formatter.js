@@ -1,25 +1,64 @@
 import _ from 'lodash'
 import Formatter from '.'
+import moment from 'moment'
+import { generateDefaultStatistics } from './statistics'
+import PluginBuilder from './builder'
+import MinionOptionSplitter from './helpers/minion_option_splitter'
 
 export default class ChartPointsFormatter extends Formatter {
   constructor(options) {
     super(options)
-    if (this.options.length > 0) {
-      let i = _.parseInt(this.options[0])
-      if (i && i >= 0) {
-        this.eventBroadcaster.emit('simulation-statistics-maxpoints', i)
+    this.maxPoints = 20
+    this.chartPoints = []
+    this.pluginMinions = []
+    for (let option of this.options) {
+      let mp = _.parseInt(option)
+      if (!isNaN(mp)) this.maxPoints = mp
+      else {
+        let m = MinionOptionSplitter.split(option, options)
+        if (PluginBuilder.isMinion(m.type)) this.pluginMinions.push(m)
       }
     }
-    this.eventBroadcaster.on(
-      'simulation-statistics-finished',
-      ::this.logChartPoints
-    )
+    this.eventBroadcaster.on('simulation-run-finished', ::this.processData)
   }
 
-  logChartPoints(result) {
-    for (let g of result.groups) {
-      for (let cp of g.chartPoints) {
-        let group = cp.text
+  processData({ data }) {
+    this.eventBroadcaster.emit('chartpoints-started')
+    this.createChartPoints(data)
+    this.logChartPoints()
+    this.eventBroadcaster.emit('chartpoints-finished', this.chartPoints)
+  }
+
+  createChartPoints(data) {
+    let startPeriod = data.start
+    let period = this.getPeriod(
+      this.durationBetween(data.start, data.stop),
+      this.maxPoints
+    )
+    let endPeriod = this.getEnd(startPeriod, period)
+    while (endPeriod <= data.stop) {
+      let presult = generateDefaultStatistics(
+        data,
+        this.strict,
+        startPeriod,
+        endPeriod
+      )
+      presult = this.runMinions(presult)
+      this.chartPoints.push({
+        instant: this.getMid(startPeriod, endPeriod),
+        value: presult,
+      })
+      startPeriod = endPeriod
+      endPeriod = this.getEnd(endPeriod, period)
+    }
+  }
+
+  logChartPoints() {
+    for (let cp of this.chartPoints) {
+      this.statTypes = cp.value.statTypes
+      let instant = moment(cp.instant).toISOString()
+      for (let cpg of cp.value.groups) {
+        let group = cpg.text
         let scenario = ''
         let step = ''
         this.log(
@@ -29,11 +68,11 @@ export default class ChartPointsFormatter extends Formatter {
             ',' +
             step +
             ',' +
-            cp.stop +
-            this.getRowStats(cp) +
+            instant +
+            this.getRowStats(cpg.stats) +
             '\n'
         )
-        for (let cptc of cp.testCases) {
+        for (let cptc of cpg.testCases) {
           scenario = cptc.name
           this.log(
             group +
@@ -42,12 +81,12 @@ export default class ChartPointsFormatter extends Formatter {
               ',' +
               step +
               ',' +
-              cp.stop +
-              this.getRowStats(cptc) +
+              instant +
+              this.getRowStats(cptc.stats) +
               '\n'
           )
           for (let cpts of cptc.steps) {
-            step = cpts.name
+            step = cpts.text
             this.log(
               group +
                 ',' +
@@ -55,8 +94,8 @@ export default class ChartPointsFormatter extends Formatter {
                 ',' +
                 step +
                 ',' +
-                cp.stop +
-                this.getRowStats(cpts) +
+                instant +
+                this.getRowStats(cpts.stats) +
                 '\n'
             )
           }
@@ -66,15 +105,43 @@ export default class ChartPointsFormatter extends Formatter {
   }
 
   getRowStats(row) {
-    return (
-      ',cnt,' +
-      row.cnt +
-      ',avg,' +
-      row.avg +
-      ',min,' +
-      row.min +
-      ',max,' +
-      row.max
-    )
+    let text = ''
+    for (let stat in this.statTypes) {
+      if (this.statTypes[stat].isFloatingPoint && row[stat] != null) {
+        text += ',' + stat + ',' + row[stat].toFixed(3)
+      } else {
+        text += ',' + stat + ',' + row[stat]
+      }
+    }
+    return text
+  }
+
+  getEnd(start, seconds) {
+    let m = moment(start)
+    m.add(seconds, 's')
+    return m.utc().format()
+  }
+
+  durationBetween(start, end) {
+    var ms = moment(end).diff(moment(start))
+    return moment.duration(ms)
+  }
+
+  getMid(start, end) {
+    var ms = moment(end).diff(moment(start)) / 2
+    return moment(start).add(ms, 'ms')
+  }
+
+  getPeriod(time, times) {
+    return time.asSeconds() / times
+  }
+
+  runMinions(chartPoint) {
+    for (let plugin of this.pluginMinions) {
+      let sc = PluginBuilder.build(plugin.type, plugin.options)
+      let result = sc.run(chartPoint)
+      chartPoint = result != null ? result : chartPoint
+    }
+    return chartPoint
   }
 }

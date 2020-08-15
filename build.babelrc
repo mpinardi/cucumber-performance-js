@@ -1,0 +1,25 @@
+{
+  "ignore": [
+    "src/**/veggie_filter_spec.js",
+    "src/**/test_case_filter_spec.js",
+    "src/**/slice_spec.js",
+    "src/**/chartpoints_formatter_spec.js",
+    "src/**/taurus_formatter_spec.js",
+    "src/**/logger_formatter_spec.js",
+    "src/**/progress_formatter_spec.js",
+    "src/**/csv_helpers_spec.js",
+    "src/**/statistics_formatter_spec.js",
+    "src/**/summary_formatter_spec.js",
+    "src/**/percentile_minion_spec.js",
+    "src/**/stddeviation_minion_spec.js",
+    "src/**/summary_helpers_spec.js",
+    "src/**/issue_helpers_spec.js",
+    "src/**/outputpath_helpers_spec.js",
+    "src/**/minion_option_splitter_spec.js",
+    "src/**/configuration_builder_spec.js",
+    "src/**/helpers_spec.js",
+    "src/**/option_splitter_spec.js",
+    "src/**/profile_loader_spec.js",
+    "src/**/*_spec.js",
+  ]
+}

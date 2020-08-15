@@ -12,6 +12,50 @@ describe('SummaryHelpers', () => {
         duration: Moment.duration(0),
         name: 'simulation',
         groups: [],
+        start: '2019-06-04T14:10:24Z',
+        stop: '2019-06-04T22:10:24Z',
+        statTypes: {
+          avg: {
+            abbrivation: 'avg',
+            dataType: 'NANOS',
+            fullname: 'Average',
+            isFloatingPoint: true,
+            key: 'avg',
+            shortName: 'Avg',
+          },
+          cncrnt: {
+            abbrivation: 'cncrnt',
+            dataType: 'OTHER',
+            fullName: 'Concurrency',
+            isFloatingPoint: true,
+            key: 'cncrnt',
+            shortName: 'Concurrency',
+          },
+          cnt: {
+            abbrivation: 'cnt',
+            dataType: 'COUNT',
+            fullname: 'Count',
+            isFloatingPoint: false,
+            key: 'cnt',
+            shortName: 'Count',
+          },
+          max: {
+            abbrivation: 'max',
+            dataType: 'NANOS',
+            fullname: 'Maximum',
+            isFloatingPoint: false,
+            key: 'max',
+            shortName: 'Max',
+          },
+          min: {
+            abbrivation: 'min',
+            dataType: 'NANOS',
+            fullname: 'Minimum',
+            isFloatingPoint: false,
+            key: 'min',
+            shortName: 'Min',
+          },
+        },
       }
       this.options = {
         colorFns: getColorFns(false),
@@ -36,26 +80,36 @@ describe('SummaryHelpers', () => {
         this.testRun.groups = [
           {
             text: 'a.feature',
-            avg: 0,
-            min: 0,
-            max: 0,
-            cnt: 0,
+            stats: {
+              avg: 0,
+              min: 0,
+              max: 0,
+              cnt: 0,
+              cncrnt: 0,
+            },
             testCases: [
               {
                 name: 'test case',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.PASSED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
@@ -68,7 +122,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature cnt:0 avg:0.0000 min:0 max:0 \n\tScenario: test case cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
         )
       })
     })
@@ -78,26 +132,36 @@ describe('SummaryHelpers', () => {
         this.testRun.groups = [
           {
             text: 'a.feature',
-            avg: 0,
-            min: 0,
-            max: 0,
-            cnt: 0,
+            stats: {
+              avg: 0,
+              min: 0,
+              max: 0,
+              cnt: 0,
+              cncrnt: 0,
+            },
             testCases: [
               {
                 name: 'test case',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.PASSED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
@@ -110,7 +174,7 @@ describe('SummaryHelpers', () => {
 
       it('filter out the hooks', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature cnt:0 avg:0.0000 min:0 max:0 \n\tScenario: test case cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
         )
       })
     })
@@ -120,34 +184,48 @@ describe('SummaryHelpers', () => {
         this.testRun.groups = [
           {
             text: 'a.feature',
-            avg: 0,
-            min: 0,
-            max: 0,
-            cnt: 0,
+            stats: {
+              avg: 0,
+              min: 0,
+              max: 0,
+              cnt: 0,
+              cncrnt: 0,
+            },
             testCases: [
               {
                 name: 'test case',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.PASSED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                   {
                     sourceLocation: { uri: 'a.feature', line: 3 },
                     status: Status.PASSED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
@@ -160,7 +238,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature cnt:0 avg:0.0000 min:0 max:0 \n\tScenario: test case cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
         )
       })
     })
@@ -170,116 +248,162 @@ describe('SummaryHelpers', () => {
         this.testRun.groups = [
           {
             text: 'a.feature',
-            avg: 0,
-            min: 0,
-            max: 0,
-            cnt: 0,
+            stats: {
+              avg: 0,
+              min: 0,
+              max: 0,
+              cnt: 0,
+              cncrnt: 0,
+            },
             testCases: [
               {
                 name: 'tc passed',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.PASSED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
               {
                 name: 'tc failed',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.FAILED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
               {
                 name: 'tc ambigious',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
+                text: 'step a',
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.AMBIGUOUS,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
               {
                 name: 'tc pending',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.PENDING,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
               {
                 name: 'tc skipped',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.SKIPPED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
               {
                 name: 'tc undefined',
-                cnt: 0,
-                avg: 0,
-                min: 0,
-                max: 0,
+                stats: {
+                  avg: 0,
+                  min: 0,
+                  max: 0,
+                  cnt: 0,
+                  cncrnt: 0,
+                },
                 sourceLocation: { uri: 'a.feature', line: 1 },
                 steps: [
                   {
                     sourceLocation: { uri: 'a.feature', line: 2 },
                     status: Status.UNDEFINED,
-                    cnt: 0,
-                    avg: 0,
-                    min: 0,
-                    max: 0,
+                    stats: {
+                      avg: 0,
+                      min: 0,
+                      max: 0,
+                      cnt: 0,
+                      cncrnt: 0,
+                    },
+                    text: 'step a',
                   },
                 ],
               },
@@ -292,14 +416,14 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc passed cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc failed cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc ambigious cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc pending cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc skipped cnt:0 avg:0.0000 min:0 max:0 \n\t\tStep: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-            'Scenario: tc undefined cnt:0 avg:0.0000 min:0 max:0 \n\t\t' +
-            'Step: undefined cnt:0 avg:0.0000 min:0 max:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc passed avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc failed avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc ambigious avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc pending avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc skipped avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+            'Scenario: tc undefined avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\t' +
+            'Step: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
         )
       })
     })

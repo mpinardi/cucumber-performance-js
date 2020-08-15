@@ -2,13 +2,18 @@ import getColorFns from './get_color_fns'
 import ProgressFormatter from './progress_formatter'
 import path from 'path'
 import SummaryFormatter from './summary_formatter'
-import Statistics from './statistics'
+import TaurusFormatter from './taurus_formatter'
+import Statistics from './statistics_formatter'
 import ChartPointsFormatter from './chartpoints_formatter'
 import LoggerFormatter from './logger_formatter'
+import PercentileCreator from './percentile_minion'
+import StdDeviationCreator from './stddeviation_minion'
+import Minion from './minion'
+import Formatter from '.'
 
-export default class FormatterBuilder {
+export default class PluginBuilder {
   static build(type, options) {
-    const Formatter = FormatterBuilder.getConstructorByType(type, options)
+    const Formatter = PluginBuilder.getConstructorByType(type, options)
     const extendedOptions = {
       colorFns: getColorFns(options.colorsEnabled),
       ...options,
@@ -28,9 +33,35 @@ export default class FormatterBuilder {
         return Statistics
       case 'progress':
         return ProgressFormatter
+      case 'taurus':
+        return TaurusFormatter
+      case 'prcntl':
+        return PercentileCreator
+      case 'prctl':
+        return PercentileCreator
+      case 'stddev':
+        return StdDeviationCreator
+      case 'stdev':
+        return StdDeviationCreator
       default:
-        return FormatterBuilder.loadCustomFormatter(type, options)
+        return PluginBuilder.loadCustomFormatter(type, options)
     }
+  }
+
+  static isMinion(type) {
+    if (type != null && type !== undefined) {
+      let plugin = this.getConstructorByType(type, null)
+      if (plugin.prototype instanceof Minion) return true
+    }
+    return false
+  }
+
+  static isFormatter(type) {
+    if (type != null && type !== undefined) {
+      let plugin = this.getConstructorByType(type, null)
+      if (plugin.prototype instanceof Formatter) return true
+    }
+    return false
   }
 
   static loadCustomFormatter(customFormatterPath, { cwd }) {

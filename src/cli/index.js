@@ -131,7 +131,7 @@ export default class Cli {
       veggieFilter: new VeggieFilter(configuration.veggieFilterOptions),
     })
     let results = []
-    eventBroadcaster.emit('plan-run-started')
+    eventBroadcaster.emit('perf-run-started')
 
     if (testCases.length > 0) {
       let count = 1
@@ -144,7 +144,8 @@ export default class Cli {
             eventBroadcaster,
             options: configuration.runtimeOptions,
             supportCodePaths: configuration.supportCodePaths,
-            supportCodeRequiredModules: configuration.supportCodeRequiredModules,
+            supportCodeRequiredModules:
+              configuration.supportCodeRequiredModules,
             testCases: testCases,
           })
           await new Promise(resolve => {
@@ -166,7 +167,7 @@ export default class Cli {
         'No features found. Please specify feature location: <GLOB|DIR|FILE> or --require <GLOB|DIR|FILE>'
       )
     }
-    eventBroadcaster.emit('plan-run-finished')
+    eventBroadcaster.emit('perf-run-finished')
     await this.cleanup()
     let success = true
     for (let result of results) {

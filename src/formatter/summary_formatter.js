@@ -35,7 +35,9 @@ export default class SummaryFormatter extends Formatter {
             //   gherkinDocument,
             //   pickle,
             // } = this.eventDataCollector.getTestCaseData(testCase.sourceLocation)
+            // eslint-disable-next-line prettier/prettier
             const gherkinDocument = this.eventDataCollector.gherkinDocumentMap[group.uri]
+            // eslint-disable-next-line prettier/prettier
             const pickle = this.eventDataCollector.pickleMap[testCase.sourceLocation.uri + ':' + testCase.sourceLocation.line]
             this.log(
               formatIssue({

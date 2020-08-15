@@ -4,9 +4,7 @@ export { default as VeggieFilter } from './veggie_filter'
 export { default as Cli } from './cli'
 export { default as WebRuntime } from './runtime/webworker'
 export { default as NodeRuntime } from './runtime/cprocess/master'
-export {
-  default as supportCodeLibraryBuilder,
-} from './support_code_library_builder'
+export { default as supportCodeLibraryBuilder } from './support_code_library_builder'
 export {
   getSimulations,
   getSimulationsFromFilesystem,

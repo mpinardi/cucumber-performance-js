@@ -7,6 +7,7 @@ import figures from 'figures'
 import { EventEmitter } from 'events'
 import Gherkin from 'gherkin'
 import moment from 'moment'
+import { statType } from './statistics'
 
 describe('SummaryFormatter', () => {
   beforeEach(function() {
@@ -52,25 +53,40 @@ describe('SummaryFormatter', () => {
           stop: moment.utc().format(),
           duration: moment.duration(1000),
           name: 'example',
+          statTypes: {
+            cnt: statType.COUNT,
+            avg: statType.AVERAGE,
+            min: statType.MINIMUM,
+            max: statType.MAXIMUM,
+            cncrnt: statType.CONCURRENCY,
+          },
           groups: [
             {
               start: moment.utc().format(),
               stop: moment.utc().format(),
-              avg: 0,
-              min: 0,
-              max: 0,
-              cnt: 0,
-              sum: 0,
+              stats: {
+                cnt: 0,
+                // eslint-disable-next-line prettier/prettier
+                avg: 0.000,
+                min: 0,
+                max: 0,
+                // eslint-disable-next-line prettier/prettier
+                cncrnt: 0.000,
+              },
               uri: 'a.feature',
               testCases: [
                 {
                   steps: [
                     {
-                      avg: 0,
-                      min: 0,
-                      max: 0,
-                      cnt: 0,
-                      sum: 0,
+                      stats: {
+                        cnt: 0,
+                        // eslint-disable-next-line prettier/prettier
+                        avg: 0.000,
+                        min: 0,
+                        max: 0,
+                        // eslint-disable-next-line prettier/prettier
+                        cncrnt: 0.000,
+                      },
                       sourceLocation: {},
                       actionLocation: {},
                       text: 'Given a step',
@@ -79,15 +95,18 @@ describe('SummaryFormatter', () => {
                   ],
                   line: 2,
                   name: 'b',
-                  avg: 0,
-                  min: 0,
-                  max: 0,
-                  cnt: 0,
-                  sum: 0,
+                  stats: {
+                    cnt: 0,
+                    // eslint-disable-next-line prettier/prettier
+                    avg: 0.000,
+                    min: 0,
+                    max: 0,
+                    // eslint-disable-next-line prettier/prettier
+                    cncrnt: 0.000,
+                  },
                   sourceLocation: {},
                 },
               ],
-              chartPoints: [],
             },
           ],
         }
@@ -130,9 +149,9 @@ describe('SummaryFormatter', () => {
         it('logs the issue', function() {
           expect(this.output).to.eql(
             'Simulation: example\n' +
-              'Group: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-              'Scenario: b cnt:0 avg:0.0000 min:0 max:0 \n\t\t' +
-              'Step: Given a step cnt:0 avg:0.0000 min:0 max:0 \n\n' +
+              'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
+              'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
+              'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
               'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
@@ -187,9 +206,9 @@ describe('SummaryFormatter', () => {
         it('logs the issue', function() {
           expect(this.output).to.eql(
             'Simulation: example\n' +
-              'Group: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-              'Scenario: b cnt:0 avg:0.0000 min:0 max:0 \n\t\t' +
-              'Step: Given a step cnt:0 avg:0.0000 min:0 max:0 \n\n' +
+              'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
+              'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
+              'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
               'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
@@ -239,9 +258,9 @@ describe('SummaryFormatter', () => {
         it('logs the issue', function() {
           expect(this.output).to.eql(
             'Simulation: example\n' +
-              'Group: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-              'Scenario: b cnt:0 avg:0.0000 min:0 max:0 \n\t\t' +
-              'Step: Given a step cnt:0 avg:0.0000 min:0 max:0 \n\n' +
+              'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
+              'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
+              'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
               'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
@@ -289,9 +308,9 @@ describe('SummaryFormatter', () => {
         it('logs the issue', function() {
           expect(this.output).to.eql(
             'Simulation: example\n' +
-              'Group: undefined cnt:0 avg:0.0000 min:0 max:0 \n\t' +
-              'Scenario: b cnt:0 avg:0.0000 min:0 max:0 \n\t\t' +
-              'Step: Given a step cnt:0 avg:0.0000 min:0 max:0 \n\n' +
+              'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
+              'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
+              'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
               'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +

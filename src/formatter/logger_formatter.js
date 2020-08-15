@@ -14,7 +14,7 @@ export default class LoggerFormatter extends Formatter {
       )
     else options.eventBroadcaster.on('cuke-run-finished', ::this.logToFile)
     if (this.options.length > 0)
-      options.eventBroadcaster.on('plan-run-started', ::this.processFile)
+      options.eventBroadcaster.on('perf-run-started', ::this.processFile)
   }
 
   logToFile({ data }) {

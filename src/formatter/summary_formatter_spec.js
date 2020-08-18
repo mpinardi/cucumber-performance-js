@@ -23,6 +23,7 @@ describe('SummaryFormatter', () => {
         this.eventBroadcaster
       ),
       log: logFn,
+      stream: process.stdout,
       options: [],
     })
   })
@@ -49,8 +50,8 @@ describe('SummaryFormatter', () => {
     describe('results', () => {
       beforeEach(function() {
         this.result = {
-          start: moment.utc().format(),
-          stop: moment.utc().format(),
+          start: '2019-06-04T14:10:24Z',
+          stop: '2019-06-04T22:10:24Z',
           duration: moment.duration(1000),
           name: 'example',
           statTypes: {
@@ -148,11 +149,10 @@ describe('SummaryFormatter', () => {
 
         it('logs the issue', function() {
           expect(this.output).to.eql(
-            'Simulation: example\n' +
+            '\nSimulation: example Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:1.0\n' +
               'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
               'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
               'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
-              'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
               `   ${figures.cross} Given a step # steps.js:4\n` +
@@ -205,11 +205,10 @@ describe('SummaryFormatter', () => {
 
         it('logs the issue', function() {
           expect(this.output).to.eql(
-            'Simulation: example\n' +
+            '\nSimulation: example Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:1.0\n' +
               'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
               'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
               'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
-              'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
               `   ${figures.cross} Given a step # steps.js:4\n` +
@@ -257,11 +256,10 @@ describe('SummaryFormatter', () => {
 
         it('logs the issue', function() {
           expect(this.output).to.eql(
-            'Simulation: example\n' +
+            '\nSimulation: example Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:1.0\n' +
               'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
               'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
               'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
-              'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
               `   ? Given a step # steps.js:4\n` +
@@ -307,11 +305,10 @@ describe('SummaryFormatter', () => {
 
         it('logs the issue', function() {
           expect(this.output).to.eql(
-            'Simulation: example\n' +
+            '\nSimulation: example Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:1.0\n' +
               'Group: undefined cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t' +
               'Scenario: b cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\t\t' +
               'Step: Given a step cnt:0 avg:0.000 min:0 max:0 cncrnt:0.000 \n\n' +
-              'Runtime: 0:0:1.0\n' +
               'Issues:\n' +
               '1) Scenario: b # a.feature:2\n' +
               `   ? Given a step # steps.js:4\n` +

@@ -1,7 +1,7 @@
 import { formatCSV } from './helpers'
 import Formatter from '.'
 import StatisticsFormatter from './statistics_formatter'
-import { statType } from './statistics'
+import { statType, statDataType } from './statistics'
 
 export const HEADER =
   'label,avg_ct,avg_lt,avg_rt,bytes,concurrency,fail,stdev_rt,succ,throughput,perc_0.0,perc_50.0,perc_90.0,perc_95.0,perc_99.0,perc_99.9,perc_100.0,rc_200'
@@ -65,6 +65,7 @@ export default class TaurusFormatter extends Formatter {
         colorFns: this.colorFns,
         heading: HEADER,
         statOrder: ORDER,
+        displayType: statDataType.MILLIS,
         testRun: result,
       })
     )

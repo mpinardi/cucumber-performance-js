@@ -1,7 +1,11 @@
 import { When, Then } from 'cucumber'
 import { expect } from 'chai'
 
-When('Wait for {int}', function(int) {})
+When('Wait for {int}', async function(int) {
+  await new Promise(resolve => {
+    setTimeout(resolve, int);
+  });
+})
 
 Then('Verify', function(dataTable) {
   //  Write code here that turns the phrase above into concrete actions

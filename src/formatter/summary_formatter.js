@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { formatIssue, formatSummary } from './helpers'
+import { statDataType } from './statistics'
 import Formatter from '.'
 
 export default class SummaryFormatter extends Formatter {
@@ -12,8 +13,10 @@ export default class SummaryFormatter extends Formatter {
   }
 
   logSummary(result) {
+    if (this.isStdio()) this.log('\n')
     this.log(
       formatSummary({
+        displayType: statDataType.MILLIS,
         colorFns: this.colorFns,
         testRun: result,
       })

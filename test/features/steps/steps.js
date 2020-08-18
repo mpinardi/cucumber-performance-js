@@ -4,7 +4,12 @@ var _cucumber = require("cucumber");
 
 var _chai = require("chai");
 
-(0, _cucumber.When)('Wait for {int}', function (int) {});
+(0, _cucumber.When)('Wait for {int}', async function (int) {
+  await new Promise(resolve => {
+    setTimeout(resolve, int);
+  });
+});
+
 (0, _cucumber.Then)('Verify', function (dataTable) {//  Write code here that turns the phrase above into concrete actions
   //  return 'pending';
 });

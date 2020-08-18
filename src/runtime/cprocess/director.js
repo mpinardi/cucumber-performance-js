@@ -69,7 +69,11 @@ export default class Director {
           this.groups[runner.groupId].ran++
           this.groups[runner.groupId].running--
           if (this.result.groups[runner.groupId].start === null) {
-            this.result.groups[runner.groupId].start = moment.utc().format()
+            this.result.groups[runner.groupId].start = message.data.start
+            this.result.groups[runner.groupId].stop = message.data.stop
+          }
+          if (this.result.groups[runner.groupId].stop < message.data.stop) {
+            this.result.groups[runner.groupId].stop = message.data.stop
           }
           this.ran += 1
           this.result.groups[runner.groupId].results.push(message.data)

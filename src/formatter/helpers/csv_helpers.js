@@ -1,10 +1,19 @@
-export function formatCSV({ colorFns, heading, statOrder, testRun }) {
+import { convertOutput } from './summary_helpers'
+
+export function formatCSV({
+  colorFns,
+  heading,
+  statOrder,
+  displayType,
+  testRun,
+}) {
   let rows = ''
   testRun.groups.forEach(group => {
     let v = getGroupLines({
       colorFns: colorFns,
       group: group,
       statOrder: statOrder,
+      displayType: displayType,
       statTypes: testRun.statTypes,
     })
     rows += v
@@ -12,7 +21,7 @@ export function formatCSV({ colorFns, heading, statOrder, testRun }) {
   return [colorFns['simulationTitle'](heading), rows].join('\n')
 }
 
-function getGroupLines({ colorFns, group, statOrder, statTypes }) {
+function getGroupLines({ colorFns, group, statOrder, displayType, statTypes }) {
   let gt = colorFns['groupTitle'](group.text)
   let text =
     gt +
@@ -20,6 +29,7 @@ function getGroupLines({ colorFns, group, statOrder, statTypes }) {
       object: group,
       statOrder: statOrder,
       statTypes: statTypes,
+      displayType: displayType,
     }) +
     '\n'
   group.testCases.forEach(testCase => {
@@ -31,6 +41,7 @@ function getGroupLines({ colorFns, group, statOrder, statTypes }) {
         object: testCase,
         statOrder: statOrder,
         statTypes: statTypes,
+        displayType: displayType,
       }) +
       '\n'
     testCase.steps.forEach(step => {
@@ -43,6 +54,7 @@ function getGroupLines({ colorFns, group, statOrder, statTypes }) {
           object: step,
           statOrder: statOrder,
           statTypes: statTypes,
+          displayType: displayType,
         }) +
         '\n'
     })
@@ -50,7 +62,7 @@ function getGroupLines({ colorFns, group, statOrder, statTypes }) {
   return text
 }
 
-function getStatistics({ object, statOrder, statTypes }) {
+function getStatistics({ object, statOrder, statTypes, displayType }) {
   let text = ''
   for (let stat of statOrder) {
     if (statTypes.hasOwnProperty(stat.key)) {
@@ -58,9 +70,21 @@ function getStatistics({ object, statOrder, statTypes }) {
         statTypes[stat.key].isFloatingPoint &&
         object.stats[stat.key] != null
       ) {
-        text += ',' + object.stats[stat.key].toFixed(3)
+        text +=
+          ',' +
+          convertOutput(
+            displayType,
+            statTypes[stat.key].dataType,
+            object.stats[stat.key]
+          ).toFixed(3)
       } else {
-        text += ',' + object.stats[stat.key]
+        text +=
+          ',' +
+          convertOutput(
+            displayType,
+            statTypes[stat.key].dataType,
+            object.stats[stat.key]
+          )
       }
     } else {
       text += ',' + stat.default

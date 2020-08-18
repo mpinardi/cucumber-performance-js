@@ -1,71 +1,82 @@
 import { statDataType } from '../statistics'
 
 export function convertOutput(displayType, dataType, value) {
-  let output = ''
-  if (dataType === statDataType.COUNT || dataType === statDataType.OTHER) {
-    output = value
-  } else if (displayType !== dataType) {
+  let output = value
+  if (
+    !(dataType === statDataType.COUNT || dataType === statDataType.OTHER) &&
+    displayType !== dataType
+  ) {
     if (
       dataType === statDataType.NANOS &&
       displayType === statDataType.MILLIS
     ) {
-      output = output + value / 1000000
+      output = value / 1000000
     } else if (
       dataType === statDataType.MILLIS &&
       displayType === statDataType.NANOS
     ) {
-      output = output + value * 1000000
+      output = value * 1000000
     } else if (
       dataType === statDataType.MILLIS &&
       displayType === statDataType.SECONDS
     ) {
-      output = output + value / 1000
+      output = value / 1000
     } else if (
       dataType === statDataType.NANOS &&
       displayType === statDataType.SECONDS
     ) {
-      output = output + value / 1000000000
+      output = value / 1000000000
     } else if (
       dataType === statDataType.SECONDS &&
       displayType === statDataType.MILLIS
     ) {
-      output = output + value * 1000
+      output = value * 1000
     } else if (
       dataType === statDataType.SECONDS &&
       displayType === statDataType.NANOS
     ) {
-      output = output + value * 1000000000
+      output = value * 1000000000
     }
-  } else {
-    output = output + value
   }
   return output
 }
 
-export function formatSummary({ colorFns, testRun }) {
+export function formatSummary({ displayType, colorFns, testRun }) {
   let groupSummarys = ''
   testRun.groups.forEach((group, index) => {
     let v = getGroupSummary({
       colorFns: colorFns,
       group: group,
       statTypes: testRun.statTypes,
+      displayType: displayType,
     })
     groupSummarys += v
   })
   const durationSummary = getDuration(testRun.duration)
   return [
-    colorFns['simulationTitle']('Simulation: ') + testRun.name,
+    colorFns['simulationTitle']('Simulation: ') +
+      testRun.name +
+      colorFns['statTitle'](' Start: ') +
+      testRun.start +
+      colorFns['statTitle'](' Stop: ') +
+      testRun.stop +
+      colorFns['statTitle'](' Duration: ') +
+      durationSummary,
     groupSummarys,
-    'Runtime: ' + durationSummary,
   ].join('\n')
 }
 
-function getGroupSummary({ colorFns, group, statTypes }) {
+function getGroupSummary({ colorFns, group, statTypes, displayType }) {
   let text =
     colorFns['groupTitle']('Group: ') +
     group.text +
     ' ' +
-    getStatistics({ colorFns: colorFns, object: group, statTypes: statTypes }) +
+    getStatistics({
+      colorFns: colorFns,
+      object: group,
+      statTypes: statTypes,
+      displayType: displayType,
+    }) +
     '\n'
   group.testCases.forEach(testCase => {
     text +=
@@ -77,6 +88,7 @@ function getGroupSummary({ colorFns, group, statTypes }) {
         colorFns: colorFns,
         object: testCase,
         statTypes: statTypes,
+        displayType: displayType,
       }) +
       '\n'
     testCase.steps.forEach(step => {
@@ -89,6 +101,7 @@ function getGroupSummary({ colorFns, group, statTypes }) {
           colorFns: colorFns,
           object: step,
           statTypes: statTypes,
+          displayType: displayType,
         }) +
         '\n'
     })
@@ -96,13 +109,21 @@ function getGroupSummary({ colorFns, group, statTypes }) {
   return text
 }
 
-function getStatistics({ colorFns, object, statTypes }) {
+function getStatistics({ colorFns, object, statTypes, displayType }) {
   let text = ''
   for (let stat in statTypes) {
     if (statTypes[stat].isFloatingPoint && object.stats[stat] != null) {
-      text += `${colorFns['statTitle'](stat)}:${object.stats[stat].toFixed(3)} `
+      text += `${colorFns['statTitle'](stat)}:${convertOutput(
+        displayType,
+        statTypes[stat].dataType,
+        object.stats[stat]
+      ).toFixed(3)} `
     } else {
-      text += `${colorFns['statTitle'](stat)}:${object.stats[stat]} `
+      text += `${colorFns['statTitle'](stat)}:${convertOutput(
+        displayType,
+        statTypes[stat].dataType,
+        object.stats[stat]
+      )} `
     }
   }
   return text

@@ -1,6 +1,6 @@
 {
   "name": "cucumber-perf",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The js implimentation of Cucumber-Perf",
   "keywords": [
     "testing",
@@ -36,7 +36,7 @@
     "lib/"
   ],
   "scripts": {
-    "feature-test": "node ./bin/cucumber-perf -p test\\plans\\ --plan-tags @simPos -f progress test\\features\\",
+    "feature-test": "node ./bin/cucumber-perf -p test\\plans\\ --plan-tags @simPos -f progress -f summary test\\features\\",
     "build-local": "babel src -d lib --copy-files --no-copy-ignored --config-file ./build.babelrc",
     "build-local-test": "babel test/steps -d test/features/steps --config-file ./build.babelrc'",
     "lint-autofix": "eslint --fix \"{example,features,scripts,src,test}/**/*.js\"",

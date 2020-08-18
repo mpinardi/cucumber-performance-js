@@ -70,7 +70,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs step totals, scenario totals, and duration', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\n\nRuntime: 0:0:0.0'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.0\n'
         )
       })
     })
@@ -122,7 +122,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.0\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n'
         )
       })
     })
@@ -174,7 +174,7 @@ describe('SummaryHelpers', () => {
 
       it('filter out the hooks', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.0\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n'
         )
       })
     })
@@ -238,7 +238,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.0\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\tScenario: test case avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n'
         )
       })
     })
@@ -416,14 +416,14 @@ describe('SummaryHelpers', () => {
 
       it('outputs the totals and number of each status', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.0\nGroup: a.feature avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc passed avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc failed avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc ambigious avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc pending avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc skipped avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\tStep: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t' +
             'Scenario: tc undefined avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\t\t' +
-            'Step: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n\nRuntime: 0:0:0.0'
+            'Step: step a avg:0.000 cncrnt:0.000 cnt:0 max:0 min:0 \n'
         )
       })
     })
@@ -436,7 +436,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the duration as 0m00.123s', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\n\nRuntime: 0:0:0.123'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:0.123\n'
         )
       })
     })
@@ -449,7 +449,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the duration as 0m12.300s', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\n\nRuntime: 0:0:12.300'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:0:12.300\n'
         )
       })
     })
@@ -462,7 +462,7 @@ describe('SummaryHelpers', () => {
 
       it('outputs the duration as 2m03.000s', function() {
         expect(this.result).to.contain(
-          'Simulation: simulation\n\nRuntime: 0:2:3.0'
+          'Simulation: simulation Start: 2019-06-04T14:10:24Z Stop: 2019-06-04T22:10:24Z Duration: 0:2:3.0\n'
         )
       })
     })

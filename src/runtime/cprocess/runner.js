@@ -136,16 +136,17 @@ export default class Runner {
     } else if (name === 'test-step-started') {
       let i = this.result.testCases.length - 1
       let n = this.result.testCases[i].steps.length
+      let text =  this.locations[i][n].hasOwnProperty("sourceLocation")? "cucumber hook (Before/After)" : this.testCases[i].pickle.steps[n].text;
       this.result.testCases[i].steps.push({
-        start: moment.utc().format(),
+        start: _moment.default.utc().format(),
         stop: null,
         duration: 0,
         status: null,
-        text: this.testCases[i].pickle.steps[n].text,
+        text: text,
         sourceLocation: this.locations[i][n].sourceLocation,
-        actionLocation: this.locations[i][n].actionLocation,
+        actionLocation: this.locations[i][n].actionLocation 
         // {line: _.last(this.testCases[this.curTestCase].pickle.steps[this.curStep].locations).line,uri:null}
-      })
+      });
     } else if (name === 'test-step-finished') {
       this.curStep++
       let i = this.result.testCases.length - 1

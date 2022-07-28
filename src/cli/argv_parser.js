@@ -57,7 +57,7 @@ export default class ArgvParser {
       )
       .option(
         '--plan-tags <EXPRESSION>',
-        'only execute the features or scenarios with tags matching the expression (repeatable)',
+        'only include simulations with tags matching the expression (repeatable)',
         ArgvParser.mergeTags,
         ''
       )
@@ -146,12 +146,6 @@ export default class ArgvParser {
         []
       )
       .option(
-        '--parallel <NUMBER_OF_SLAVES>',
-        'run in parallel with the given number of slaves',
-        parseInt,
-        0
-      )
-      .option(
         '-r, --require <GLOB|DIR|FILE>',
         'require files before executing features (repeatable)',
         ArgvParser.collect,
@@ -178,7 +172,7 @@ export default class ArgvParser {
     program.on('--help', () => {
       /* eslint-disable no-console */
       console.log(
-        '  For more details please visit https://github.com/cucumber/cucumber-js#cli\n'
+        '  For more details please visit https://github.com/mpinardi/cucumber-performance-js/wiki/Runtime-Options\n'
       )
       /* eslint-enable no-console */
     })

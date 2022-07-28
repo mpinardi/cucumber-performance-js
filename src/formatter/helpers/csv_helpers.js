@@ -21,10 +21,14 @@ export function formatCSV({
   return [colorFns['simulationTitle'](heading), rows].join('\n')
 }
 
+//Must encode double quotes and wrap label string in double quotes.		
+//String result = "\""+label.replaceAll("\"","\"\"")+"\""+sep+"0.00000"+sep+"0.00000"
 function getGroupLines({ colorFns, group, statOrder, displayType, statTypes }) {
-  let gt = colorFns['groupTitle'](group.text)
+  let gt = colorFns['groupTitle'](group.text.replaceAll('\"','\"\"'))
   let text =
+    '"'+
     gt +
+    '"'+
     getStatistics({
       object: group,
       statOrder: statOrder,
@@ -33,10 +37,12 @@ function getGroupLines({ colorFns, group, statOrder, displayType, statTypes }) {
     }) +
     '\n'
   group.testCases.forEach(testCase => {
-    let tct = colorFns['cukeTitle']('.' + testCase.name)
+    let tct = colorFns['cukeTitle']('.' + testCase.name.replaceAll('\"','\"\"'))
     text +=
+      '"' +
       gt +
       tct +
+      '"' +
       getStatistics({
         object: testCase,
         statOrder: statOrder,
@@ -45,11 +51,13 @@ function getGroupLines({ colorFns, group, statOrder, displayType, statTypes }) {
       }) +
       '\n'
     testCase.steps.forEach(step => {
-      let st = colorFns['cukeTitle']('.' + step.text)
+      let st = colorFns['cukeTitle']('.' + step.text.replaceAll('\"','\"\"'))
       text +=
+        '"' +
         gt +
         tct +
         st +
+        '"' +
         getStatistics({
           object: step,
           statOrder: statOrder,

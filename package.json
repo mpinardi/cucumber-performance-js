@@ -1,6 +1,6 @@
 {
   "name": "cucumber-perf",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "The js implimentation of Cucumber-Perf",
   "keywords": [
     "testing",
@@ -58,7 +58,7 @@
     "glob": "^7.1.6",
     "indent-string": "^4.0.0",
     "knuth-shuffle-seeded": "^1.0.6",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.10",
     "moment": "^2.24.0",
     "mz": "^2.4.0",
     "resolve": "^1.15.1",
@@ -71,6 +71,7 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-function-bind": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.18.9",
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
     "babel-eslint": "^10.1.0",

@@ -139,7 +139,7 @@ describe('CSVHelpers', () => {
       it('outputs the expected csv format', function() {
         expect(this.result).to.contain(
           'label,avg_ct,avg_lt,avg_rt,bytes,concurrency,fail,stdev_rt,succ,throughput,perc_0.0,perc_50.0,perc_90.0,perc_95.0,perc_99.0,perc_99.9,perc_100.0,rc_200' +
-            '\na.feature,0.000,0.000,325.250,0,2.345,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\na.feature.tc a,0.000,0.000,325.250,0,0.000,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\na.feature.tc a.step a,0.000,0.000,125.250,0,0.000,0,0.000,0,10,100,0.000,0.000,0.000,0.000,0.000,150,0\na.feature.tc a.step b,0.000,0.000,200.605,0,0.000,0,0.000,0,10,160,0.000,0.000,0.000,0.000,0.000,260,0\n'
+            '\n"a.feature",0.000,0.000,325.250,0,2.345,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a",0.000,0.000,325.250,0,0.000,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a.step a",0.000,0.000,125.250,0,0.000,0,0.000,0,10,100,0.000,0.000,0.000,0.000,0.000,150,0\n"a.feature.tc a.step b",0.000,0.000,200.605,0,0.000,0,0.000,0,10,160,0.000,0.000,0.000,0.000,0.000,260,0\n'
         )
       })
     })
@@ -230,9 +230,77 @@ describe('CSVHelpers', () => {
       it('outputs the expected csv format', function() {
         expect(this.result).to.contain(
           'label,avg_ct,avg_lt,avg_rt,bytes,concurrency,fail,stdev_rt,succ,throughput,perc_0.0,perc_50.0,perc_90.0,perc_95.0,perc_99.0,perc_99.9,perc_100.0,rc_200' +
-            '\na.feature,0.000,0.000,325.250,0,2.345,2,0.000,10,10,260,0.000,0.000,0.000,0.000,0.000,410,0\na.feature.tc a,0.000,0.000,325.250,0,0.000,2,0.000,10,10,260,0.000,0.000,0.000,0.000,0.000,410,0\na.feature.tc a.step a,0.000,0.000,125.250,0,0.000,2,0.000,10,10,100,0.000,0.000,0.000,0.000,0.000,150,0\na.feature.tc a.step b,0.000,0.000,200.605,0,0.000,2,0.000,10,10,160,0.000,0.000,0.000,0.000,0.000,260,0\n'
+            '\n"a.feature",0.000,0.000,325.250,0,2.345,2,0.000,10,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a",0.000,0.000,325.250,0,0.000,2,0.000,10,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a.step a",0.000,0.000,125.250,0,0.000,2,0.000,10,10,100,0.000,0.000,0.000,0.000,0.000,150,0\n"a.feature.tc a.step b",0.000,0.000,200.605,0,0.000,2,0.000,10,10,160,0.000,0.000,0.000,0.000,0.000,260,0\n'
         )
       })
     })
+    
+    describe('with commas', () => {
+      beforeEach(function() {
+        this.testRun.groups = [
+          {
+            text: 'a.feature',
+            start: '2019-06-04T14:10:24Z',
+            stop: '2019-06-04T22:10:24Z',
+            stats: {
+              avg: 325.25,
+              min: 260,
+              max: 410,
+              cnt: 10,
+              cncrnt: 2.345,
+            },
+            testCases: [
+              {
+                name: 'tc a',
+                stats: {
+                  avg: 325.25,
+                  min: 260,
+                  max: 410,
+                  cnt: 10,
+                  cncrnt: 0,
+                },
+                sourceLocation: { uri: 'a.feature', line: 8 },
+                steps: [
+                  {
+                    actionLocation: { uri: 'a_steps.js', line: 10 },
+                    sourceLocation: { uri: 'a.feature', line: 9 },
+                    stats: {
+                      avg: 125.25,
+                      min: 100,
+                      max: 150,
+                      cnt: 10,
+                      cncrnt: 0,
+                    },
+                    text: 'step a, what',
+                  },
+                  {
+                    actionLocation: { uri: 'a_steps.js', line: 15 },
+                    sourceLocation: { uri: 'a.feature', line: 10 },
+                    stats: {
+                      avg: 200.605,
+                      min: 160,
+                      max: 260,
+                      cnt: 10,
+                      cncrnt: 0,
+                    },
+                    text: 'step b, "double quotes"',
+                  },
+                ],
+              },
+            ],
+            durations: [],
+          },
+        ]
+        this.result = formatCSV(this.options)
+      })
+
+      it('outputs the expected csv format', function() {
+        expect(this.result).to.contain(
+          'label,avg_ct,avg_lt,avg_rt,bytes,concurrency,fail,stdev_rt,succ,throughput,perc_0.0,perc_50.0,perc_90.0,perc_95.0,perc_99.0,perc_99.9,perc_100.0,rc_200' +
+            '\n"a.feature",0.000,0.000,325.250,0,2.345,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a",0.000,0.000,325.250,0,0.000,0,0.000,0,10,260,0.000,0.000,0.000,0.000,0.000,410,0\n"a.feature.tc a.step a, what",0.000,0.000,125.250,0,0.000,0,0.000,0,10,100,0.000,0.000,0.000,0.000,0.000,150,0\n"a.feature.tc a.step b, ""double quotes""",0.000,0.000,200.605,0,0.000,0,0.000,0,10,160,0.000,0.000,0.000,0.000,0.000,260,0\n'
+        )
+      })
+    })
+
   })
 })
